@@ -33,3 +33,5 @@ Audio cerita pertama kini memakai timestamp kata hasil audit lokal di `assets/st
 Backoffice upload cerita dan Ayat Hafalan tersedia di `http://127.0.0.1:57183/` ketika `node backoffice/server.js` dijalankan. Lihat `backoffice/README.md` untuk format konten dan timing.
 
 Asset story yang dipakai berada di `assets/story/`, sedangkan logo dan mascot berada di `assets/brand/`.
+
+Fondasi backend tersedia di `firebase.json`, `firestore.rules`, dan `cloudflare/content-worker/`. Pembagian layanan, model data akun/profil anak, aturan entitlement, dan urutan aktivasi dijelaskan di `docs/backend-setup.md`. Konfigurasi ini belum terhubung ke project cloud sampai pemilik login dan memasukkan project ID serta domain miliknya.

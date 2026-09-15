@@ -43,9 +43,11 @@ migrate_working_dir/
 .env.*
 !.env.example
 firebase-debug.log
+.firebaserc
 .firebase/
 .wrangler/
 .dev.vars
+node_modules/
 
 # Symbolication related
 app.*.symbols
