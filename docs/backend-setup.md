@@ -1,5 +1,16 @@
 # Firebase + Cloudflare foundation
 
+## Current environment
+
+- Firebase project: `gembala-kecil`
+- Registered platforms: Web, Android, and iOS
+- Firestore rules and indexes: deployed
+- Cloudflare R2 bucket: `gembala-kecil-content`
+- Content Worker: `https://api-gembalakecil.duniapinta.my.id`
+- Worker admin secret: configured in Cloudflare secret storage
+
+The Flutter app initializes Firebase at startup. Parent signup/profile synchronization and remote content loading are intentionally separate implementation steps.
+
 ## Responsibility split
 
 - Firebase Authentication identifies a parent account. Free stories remain usable without authentication.

@@ -3,6 +3,12 @@
   "name": "gembala-kecil-content",
   "main": "src/index.js",
   "compatibility_date": "2026-09-15",
+  "routes": [
+    {
+      "pattern": "api-gembalakecil.duniapinta.my.id",
+      "custom_domain": true
+    }
+  ],
   "r2_buckets": [
     {
       "binding": "CONTENT",
@@ -10,6 +16,6 @@
     }
   ],
   "vars": {
-    "ALLOWED_ORIGINS": "http://127.0.0.1:57182"
+    "ALLOWED_ORIGINS": "http://127.0.0.1:57182,https://gembalakecil.duniapinta.my.id"
   }
 }

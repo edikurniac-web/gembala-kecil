@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "97464491610",
+    "project_id": "gembala-kecil",
+    "storage_bucket": "gembala-kecil.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97464491610:android:7a29c3661c579ac6dd4263",
+        "android_client_info": {
+          "package_name": "com.gembalakecil.gembala_kecil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

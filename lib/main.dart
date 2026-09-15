@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'catalog.dart';
+import 'firebase_options.dart';
 import 'story.dart';
 
 const ink = Color(0xFF1E344E);
@@ -20,6 +22,9 @@ late final ContentCatalog appCatalog;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final prefs = await SharedPreferences.getInstance();
   appCatalog = await ContentCatalog.load();
   runApp(GembalaApp(prefs: prefs));

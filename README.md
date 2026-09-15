@@ -34,4 +34,4 @@ Backoffice upload cerita dan Ayat Hafalan tersedia di `http://127.0.0.1:57183/` 
 
 Asset story yang dipakai berada di `assets/story/`, sedangkan logo dan mascot berada di `assets/brand/`.
 
-Fondasi backend tersedia di `firebase.json`, `firestore.rules`, dan `cloudflare/content-worker/`. Pembagian layanan, model data akun/profil anak, aturan entitlement, dan urutan aktivasi dijelaskan di `docs/backend-setup.md`. Konfigurasi ini belum terhubung ke project cloud sampai pemilik login dan memasukkan project ID serta domain miliknya.
+Fondasi backend tersedia di `firebase.json`, `firestore.rules`, dan `cloudflare/content-worker/`. Firebase project `gembala-kecil` sudah terhubung untuk Web, Android, dan iOS; Firestore rules sudah aktif. Cloudflare Worker/R2 tersedia di `https://api-gembalakecil.duniapinta.my.id`. Wiring form akun, sinkronisasi profil, katalog cloud, dan purchase verification masih menjadi tahap implementasi berikutnya. Lihat `docs/backend-setup.md` untuk arsitektur lengkap.
