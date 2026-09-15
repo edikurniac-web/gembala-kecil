@@ -18,7 +18,9 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1
         && request.resource.data.displayName.size() <= 80
-        && request.resource.data.email is string;
+        && request.resource.data.email is string
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
     }
 
     function validChild() {
@@ -29,6 +31,8 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 1
         && request.resource.data.name.size() <= 40
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
         && (!request.resource.data.keys().hasAny(['avatarKey'])
           || request.resource.data.avatarKey is string);
     }
@@ -40,7 +44,8 @@ service cloud.firestore {
           'completed', 'lastPage', 'updatedAt'])
         && request.resource.data.completed is bool
         && request.resource.data.lastPage is int
-        && request.resource.data.lastPage >= 0;
+        && request.resource.data.lastPage >= 0
+        && request.resource.data.updatedAt is timestamp;
     }
 
     match /parents/{uid} {

@@ -66,4 +66,18 @@ void main() {
     expect(uploaded.pages.single.words, ['Satu', 'halaman.']);
     expect(verse.text, 'Kasih Tuhan.');
   });
+
+  test('cloud catalog paths resolve through the content worker', () {
+    expect(
+      resolveContentPath(
+        'assets/content/contoh-cover.png',
+        remote: true,
+      ),
+      '$contentApiBase/v1/assets/contoh-cover.png',
+    );
+    expect(
+      resolveContentPath('assets/story/COVER.png', remote: true),
+      'assets/story/COVER.png',
+    );
+  });
 }

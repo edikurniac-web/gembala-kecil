@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'account_service.dart';
 import 'catalog.dart';
 import 'firebase_options.dart';
 import 'story.dart';
@@ -20,12 +23,57 @@ const lavender = Color(0xFFF0E9FF);
 const gold = Color(0xFFFFCF48);
 late final ContentCatalog appCatalog;
 
+bool _isRemotePath(String path) =>
+    path.startsWith('https://') || path.startsWith('http://');
+
+String? _localFallbackFor(String path) {
+  final uri = Uri.tryParse(path);
+  if (uri == null || !uri.path.startsWith('/v1/assets/')) return null;
+  final key = Uri.decodeComponent(uri.path.substring('/v1/assets/'.length));
+  return 'assets/content/$key';
+}
+
+Widget contentImage(String path, {BoxFit fit = BoxFit.contain}) {
+  if (!_isRemotePath(path)) return Image.asset(path, fit: fit);
+  return Image.network(
+    path,
+    fit: fit,
+    errorBuilder: (context, error, stackTrace) {
+      final fallback = _localFallbackFor(path);
+      return fallback == null
+          ? const ColoredBox(color: Color(0xFFF4EEE3))
+          : Image.asset(fallback, fit: fit);
+    },
+  );
+}
+
+Source contentAudioSource(String path) => _isRemotePath(path)
+    ? UrlSource(path)
+    : AssetSource(path.replaceFirst('assets/', ''));
+
+String localReadKey(String storyId, SharedPreferences prefs) {
+  if (ParentAccountService.instance.currentUser == null) return 'read_$storyId';
+  final childId = prefs.getString('active_child_id') ?? 'primary';
+  return 'read_${childId}_$storyId';
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final prefs = await SharedPreferences.getInstance();
+  final savedName = prefs.getString('child_name');
+  if (ParentAccountService.instance.currentUser != null && savedName != null) {
+    try {
+      await ParentAccountService.instance.ensureParentAndSync(
+        childName: savedName,
+        prefs: prefs,
+      );
+    } catch (error) {
+      debugPrint('Startup account sync unavailable: $error');
+    }
+  }
   appCatalog = await ContentCatalog.load();
   runApp(GembalaApp(prefs: prefs));
 }
@@ -94,7 +142,11 @@ class _SplashScreenState extends State<SplashScreen> {
                           onNameSaved: widget.onNameSaved,
                           prefs: widget.prefs,
                           initialName: widget.name)
-                      : HomeScreen(name: widget.name!, prefs: widget.prefs)));
+                      : HomeScreen(
+                          name: widget.name!,
+                          prefs: widget.prefs,
+                          onNameChanged: widget.onNameSaved,
+                        )));
     });
   }
 
@@ -204,7 +256,11 @@ class AccountIntroScreen extends StatelessWidget {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (_) => HomeScreen(name: name, prefs: prefs)),
+              builder: (_) => HomeScreen(
+                    name: name,
+                    prefs: prefs,
+                    onNameChanged: onNameSaved,
+                  )),
           (_) => false);
     }
   }
@@ -235,8 +291,20 @@ class AccountIntroScreen extends StatelessWidget {
                           height: 1.35,
                           color: Color(0xFF687889))),
                   const SizedBox(height: 28),
-                  _PrimaryButton('Buat Akun Orang Tua',
-                      () => showAccountUnavailable(context)),
+                  _PrimaryButton('Buat Akun Orang Tua', () async {
+                    final connected = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ParentAuthScreen(
+                          childName: name,
+                          prefs: prefs,
+                        ),
+                      ),
+                    );
+                    if (connected == true && context.mounted) {
+                      await finish(context);
+                    }
+                  }),
                   const SizedBox(height: 10),
                   TextButton(
                       onPressed: () => finish(context),
@@ -248,23 +316,226 @@ class AccountIntroScreen extends StatelessWidget {
               ))));
 }
 
-void showAccountUnavailable(BuildContext context) => showDialog<void>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-          title: const Text('Akun orang tua'),
-          content: const Text(
-              'Pendaftaran dan sinkronisasi belum tersedia. Kamu tetap bisa menikmati cerita gratis tanpa akun.'),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Mengerti'))
-          ],
-        ));
+class ParentAuthScreen extends StatefulWidget {
+  const ParentAuthScreen({
+    super.key,
+    required this.childName,
+    required this.prefs,
+  });
+
+  final String childName;
+  final SharedPreferences prefs;
+
+  @override
+  State<ParentAuthScreen> createState() => _ParentAuthScreenState();
+}
+
+class _ParentAuthScreenState extends State<ParentAuthScreen> {
+  final email = TextEditingController();
+  final password = TextEditingController();
+  bool createMode = true;
+  bool busy = false;
+  bool obscure = true;
+  String? error;
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  String messageFor(Object exception) {
+    if (exception is FirebaseAuthException) {
+      return switch (exception.code) {
+        'email-already-in-use' => 'Email ini sudah memiliki akun. Pilih Masuk.',
+        'invalid-email' => 'Format email belum benar.',
+        'weak-password' => 'Password perlu minimal 6 karakter.',
+        'invalid-credential' ||
+        'wrong-password' ||
+        'user-not-found' =>
+          'Email atau password tidak cocok.',
+        'too-many-requests' => 'Terlalu banyak percobaan. Coba lagi nanti.',
+        'network-request-failed' => 'Koneksi internet sedang bermasalah.',
+        _ => exception.message ?? 'Akun belum dapat diproses.',
+      };
+    }
+    return 'Akun belum dapat diproses. Silakan coba lagi.';
+  }
+
+  Future<void> submit() async {
+    FocusScope.of(context).unfocus();
+    if (!email.text.contains('@') || password.text.length < 6) {
+      setState(() =>
+          error = 'Masukkan email yang benar dan password minimal 6 karakter.');
+      return;
+    }
+    setState(() {
+      busy = true;
+      error = null;
+    });
+    try {
+      if (createMode) {
+        await ParentAccountService.instance.createAccount(
+          email: email.text,
+          password: password.text,
+          childName: widget.childName,
+          prefs: widget.prefs,
+        );
+      } else {
+        await ParentAccountService.instance.signIn(
+          email: email.text,
+          password: password.text,
+          childName: widget.childName,
+          prefs: widget.prefs,
+        );
+      }
+      if (mounted) Navigator.pop(context, true);
+    } catch (exception) {
+      if (mounted) setState(() => error = messageFor(exception));
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
+  Future<void> resetPassword() async {
+    if (!email.text.contains('@')) {
+      setState(() => error = 'Isi email terlebih dahulu untuk reset password.');
+      return;
+    }
+    setState(() {
+      busy = true;
+      error = null;
+    });
+    try {
+      await ParentAccountService.instance.sendPasswordReset(email.text);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Link reset password sudah dikirim.')),
+        );
+      }
+    } catch (exception) {
+      if (mounted) setState(() => error = messageFor(exception));
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Akun Orang Tua')),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(28),
+            children: [
+              Image.asset('assets/brand/logo.png', height: 82),
+              const SizedBox(height: 26),
+              Text(
+                createMode ? 'Buat akun orang tua' : 'Masuk sebagai orang tua',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 27,
+                  height: 1.05,
+                  fontWeight: FontWeight.w700,
+                  color: ink,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                createMode
+                    ? 'Simpan profil ${widget.childName}, progress membaca, dan pembelian.'
+                    : 'Lanjutkan profil anak dan pembelian di perangkat ini.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Color(0xFF687889)),
+              ),
+              const SizedBox(height: 24),
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(value: true, label: Text('Buat Akun')),
+                  ButtonSegment(value: false, label: Text('Masuk')),
+                ],
+                selected: {createMode},
+                onSelectionChanged: busy
+                    ? null
+                    : (selection) => setState(() {
+                          createMode = selection.first;
+                          error = null;
+                        }),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                key: const Key('parent-email-input'),
+                controller: email,
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  labelText: 'Email orang tua',
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                key: const Key('parent-password-input'),
+                controller: password,
+                obscureText: obscure,
+                onSubmitted: (_) => busy ? null : submit(),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock_outline_rounded),
+                  suffixIcon: IconButton(
+                    onPressed: () => setState(() => obscure = !obscure),
+                    icon: Icon(obscure
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                  ),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: 12),
+                Text(error!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFFB64A3C))),
+              ],
+              const SizedBox(height: 18),
+              _PrimaryButton(
+                busy
+                    ? 'Memproses…'
+                    : createMode
+                        ? 'Buat Akun Orang Tua'
+                        : 'Masuk',
+                busy ? () {} : submit,
+              ),
+              if (!createMode)
+                TextButton(
+                  onPressed: busy ? null : resetPassword,
+                  child: const Text('Lupa password?'),
+                ),
+              if (createMode) ...[
+                const SizedBox(height: 10),
+                const Text(
+                  'Kami akan mengirim email verifikasi. Cerita gratis tetap bisa dibaca tanpa akun.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: Color(0xFF687889)),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+}
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.name, required this.prefs});
+  const HomeScreen({
+    super.key,
+    required this.name,
+    required this.prefs,
+    this.onNameChanged,
+  });
   final String name;
   final SharedPreferences prefs;
+  final Future<void> Function(String)? onNameChanged;
   @override
   Widget build(BuildContext context) => Scaffold(
           body: Stack(fit: StackFit.expand, children: [
@@ -285,11 +556,18 @@ class HomeScreen extends StatelessWidget {
                   IconButton(
                       key: const Key('parent-area'),
                       tooltip: 'Area Orang Tua',
-                      onPressed: () => Navigator.push(
+                      onPressed: () async {
+                        final selected = await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  ParentScreen(name: name, prefs: prefs))),
+                            builder: (_) =>
+                                ParentScreen(name: name, prefs: prefs),
+                          ),
+                        );
+                        if (selected != null && onNameChanged != null) {
+                          await onNameChanged!(selected);
+                        }
+                      },
                       icon: const CircleAvatar(
                           backgroundColor: Color(0xFFE5F3FF),
                           child: Icon(Icons.person_rounded,
@@ -501,12 +779,62 @@ class StoryListScreen extends StatefulWidget {
 class _StoryListScreenState extends State<StoryListScreen> {
   Future<void> openStory(StoryBook story) async {
     if (!story.isFree) {
+      final account = ParentAccountService.instance;
+      if (account.currentUser == null) {
+        final openLogin = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Masuk sebelum membeli'),
+            content: const Text(
+              'Cerita gratis tetap bisa dibaca tanpa akun. Akun orang tua diperlukan untuk pembelian premium dan pemulihan akses.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Nanti'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Buat Akun / Masuk'),
+              ),
+            ],
+          ),
+        );
+        if (openLogin == true && mounted) {
+          await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ParentAuthScreen(
+                childName: widget.prefs.getString('child_name') ?? 'Anak',
+                prefs: widget.prefs,
+              ),
+            ),
+          );
+        }
+        return;
+      }
+      var entitled = false;
+      try {
+        entitled = await account.hasActiveEntitlement();
+      } catch (_) {}
+      if (!mounted) return;
+      if (entitled) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                StoryDetailScreen(prefs: widget.prefs, story: story),
+          ),
+        );
+        if (mounted) setState(() {});
+        return;
+      }
       await showDialog<void>(
           context: context,
           builder: (dialogContext) => AlertDialog(
                 title: const Text('Cerita premium'),
                 content: const Text(
-                    'Masuk atau buat akun orang tua sebelum membeli cerita premium. Pembelian belum tersedia di versi ini.'),
+                    'Akun orang tua sudah terhubung. Pembelian premium akan tersedia setelah produk App Store dan Google Play disiapkan.'),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(dialogContext),
@@ -549,8 +877,7 @@ class _StoryListScreenState extends State<StoryListScreen> {
                             borderRadius: BorderRadius.circular(16),
                             child: SizedBox.square(
                                 dimension: 108,
-                                child: Image.asset(story.cover,
-                                    fit: BoxFit.contain))),
+                                child: contentImage(story.cover))),
                         const SizedBox(width: 14),
                         Expanded(
                             child: Column(
@@ -567,7 +894,8 @@ class _StoryListScreenState extends State<StoryListScreen> {
                                   style: const TextStyle(
                                       color: Color(0xFF687889))),
                               const SizedBox(height: 8),
-                              if (widget.prefs.getBool('read_${story.id}') ==
+                              if (widget.prefs.getBool(
+                                      localReadKey(story.id, widget.prefs)) ==
                                   true)
                                 const Row(children: [
                                   Icon(Icons.check_circle,
@@ -624,8 +952,7 @@ class StoryDetailScreen extends StatelessWidget {
                                           MediaQuery.sizeOf(context).width - 32,
                                           MediaQuery.sizeOf(context).height *
                                               .51),
-                                      child: Image.asset(story.cover,
-                                          fit: BoxFit.contain)))),
+                                      child: contentImage(story.cover)))),
                           const SizedBox(height: 16),
                           Text(story.title,
                               style: const TextStyle(
@@ -719,8 +1046,7 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                     child: SizedBox.square(
                         dimension: math.min(
                             MediaQuery.sizeOf(context).width - 40, 360),
-                        child: Image.asset(widget.verse.image!,
-                            fit: BoxFit.contain)))),
+                        child: contentImage(widget.verse.image!)))),
           const SizedBox(height: 20),
           Text(widget.verse.reference,
               style: const TextStyle(color: teal, fontWeight: FontWeight.w700)),
@@ -733,10 +1059,8 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                   color: ink)),
           if (widget.verse.audio != null) ...[
             const SizedBox(height: 24),
-            _PrimaryButton(
-                '▶  Dengarkan Ayat',
-                () => player.play(AssetSource(
-                    widget.verse.audio!.replaceFirst('assets/', '')))),
+            _PrimaryButton('▶  Dengarkan Ayat',
+                () => player.play(contentAudioSource(widget.verse.audio!))),
           ],
         ]),
       );
@@ -751,92 +1075,261 @@ class ParentScreen extends StatefulWidget {
 }
 
 class _ParentScreenState extends State<ParentScreen> {
-  late List<String> profiles = [
+  final account = ParentAccountService.instance;
+  late List<String> localProfiles = [
     widget.name,
     ...?widget.prefs.getStringList('other_children')
   ];
-  Future<void> addProfile() async {
+
+  Future<String?> askProfileName() async {
     final input = TextEditingController();
-    final name = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-                title: const Text('Tambah profil anak'),
-                content: TextField(
-                    controller: input,
-                    autofocus: true,
-                    textCapitalization: TextCapitalization.words,
-                    decoration:
-                        const InputDecoration(hintText: 'Nama panggilan')),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Batal')),
-                  TextButton(
-                      onPressed: () =>
-                          Navigator.pop(context, input.text.trim()),
-                      child: const Text('Simpan'))
-                ]));
+    final value = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tambah profil anak'),
+        content: TextField(
+          controller: input,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(hintText: 'Nama panggilan'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, input.text.trim()),
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
     input.dispose();
-    if (name == null || name.isEmpty || profiles.contains(name)) return;
-    setState(() => profiles.add(name));
-    await widget.prefs
-        .setStringList('other_children', profiles.skip(1).toList());
+    return value;
+  }
+
+  Future<void> addProfile() async {
+    final name = await askProfileName();
+    if (name == null || name.isEmpty) return;
+    try {
+      if (account.currentUser != null) {
+        await account.addChild(name);
+      } else if (!localProfiles.contains(name)) {
+        setState(() => localProfiles.add(name));
+        await widget.prefs.setStringList(
+          'other_children',
+          localProfiles.skip(1).toList(),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profil belum tersimpan: $error')),
+        );
+      }
+    }
+  }
+
+  Future<void> openAuth() async {
+    final connected = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            ParentAuthScreen(childName: widget.name, prefs: widget.prefs),
+      ),
+    );
+    if (connected == true && mounted) setState(() {});
+  }
+
+  Future<void> selectChild(ChildProfile profile) async {
+    await widget.prefs.setString('active_child_id', profile.id);
+    await widget.prefs.setString('child_name', profile.name);
+    try {
+      await account.pullCloudProgress(widget.prefs);
+    } catch (error) {
+      debugPrint('Cloud progress download unavailable: $error');
+    }
+    if (mounted) Navigator.pop(context, profile.name);
+  }
+
+  Future<void> syncNow() async {
+    try {
+      await account.ensureParentAndSync(
+        childName: widget.name,
+        prefs: widget.prefs,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Progress sudah disinkronkan.')),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sync belum berhasil: $error')),
+        );
+      }
+    }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('Area Orang Tua')),
-      body: ListView(padding: const EdgeInsets.all(20), children: [
-        Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-                color: lavender, borderRadius: BorderRadius.circular(22)),
-            child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Parent account',
-                      style: TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.w700,
-                          color: ink)),
-                  SizedBox(height: 4),
-                  Text('Belum terhubung • cerita gratis tetap tersedia',
-                      style: TextStyle(color: Color(0xFF687889)))
-                ])),
-        const SizedBox(height: 22),
-        const Text('Child profile',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.w700, color: ink)),
-        const SizedBox(height: 7),
-        for (final profile in profiles)
-          Card(
-              color: Colors.white,
-              child: ListTile(
-                  leading: const Icon(Icons.child_care_rounded, color: teal),
-                  title: Text(profile),
-                  trailing: profile == widget.name
-                      ? const Icon(Icons.check_circle, color: teal)
-                      : null)),
-        TextButton.icon(
-            onPressed: addProfile,
-            icon: const Icon(Icons.add_circle_outline),
-            label: const Text('Tambah profil anak')),
-        const SizedBox(height: 16),
-        const Text('Pembelian & data',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.w700, color: ink)),
-        const ListTile(
-            leading: Icon(Icons.shopping_bag_outlined),
-            title: Text('Purchase entitlement'),
-            subtitle: Text('Belum ada pembelian')),
-        const ListTile(
-            leading: Icon(Icons.sync),
-            title: Text('Sync'),
-            subtitle: Text('Data tersimpan lokal di perangkat ini')),
-        const SizedBox(height: 12),
-        _PrimaryButton(
-            'Buat Akun Orang Tua', () => showAccountUnavailable(context)),
-      ]));
+  Widget build(BuildContext context) => StreamBuilder<User?>(
+        stream: account.authChanges,
+        initialData: account.currentUser,
+        builder: (context, snapshot) {
+          final user = snapshot.data;
+          return Scaffold(
+            appBar: AppBar(title: const Text('Area Orang Tua')),
+            body: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: lavender,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Parent account',
+                          style: TextStyle(
+                              fontSize: 23,
+                              fontWeight: FontWeight.w700,
+                              color: ink)),
+                      const SizedBox(height: 4),
+                      Text(
+                        user == null
+                            ? 'Belum terhubung • cerita gratis tetap tersedia'
+                            : user.email ?? 'Akun orang tua terhubung',
+                        style: const TextStyle(color: Color(0xFF687889)),
+                      ),
+                      if (user != null && !user.emailVerified) ...[
+                        const SizedBox(height: 8),
+                        const Text('Email belum diverifikasi.',
+                            style: TextStyle(color: coral)),
+                        TextButton(
+                          onPressed: () async {
+                            await user.sendEmailVerification();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Email verifikasi dikirim.')),
+                              );
+                            }
+                          },
+                          child: const Text('Kirim ulang verifikasi'),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 22),
+                const Text('Child profile',
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w700, color: ink)),
+                const SizedBox(height: 7),
+                if (user == null)
+                  for (final profile in localProfiles)
+                    Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        leading:
+                            const Icon(Icons.child_care_rounded, color: teal),
+                        title: Text(profile),
+                        trailing: profile == widget.name
+                            ? const Icon(Icons.check_circle, color: teal)
+                            : null,
+                      ),
+                    )
+                else
+                  StreamBuilder<List<ChildProfile>>(
+                    stream: account.children(),
+                    builder: (context, childSnapshot) {
+                      if (childSnapshot.hasError) {
+                        return const Text('Profil belum dapat dimuat.');
+                      }
+                      if (!childSnapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final active =
+                          widget.prefs.getString('active_child_id') ??
+                              'primary';
+                      return Column(
+                        children: [
+                          for (final profile in childSnapshot.data!)
+                            Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () => selectChild(profile),
+                                leading: const Icon(Icons.child_care_rounded,
+                                    color: teal),
+                                title: Text(profile.name),
+                                subtitle: const Text('Tersimpan di akun'),
+                                trailing: profile.id == active
+                                    ? const Icon(Icons.check_circle,
+                                        color: teal)
+                                    : null,
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                TextButton.icon(
+                  onPressed: addProfile,
+                  icon: const Icon(Icons.add_circle_outline),
+                  label: const Text('Tambah profil anak'),
+                ),
+                const SizedBox(height: 16),
+                const Text('Pembelian & data',
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w700, color: ink)),
+                if (user == null)
+                  const ListTile(
+                    leading: Icon(Icons.shopping_bag_outlined),
+                    title: Text('Purchase entitlement'),
+                    subtitle: Text('Masuk diperlukan sebelum membeli'),
+                  )
+                else
+                  StreamBuilder<List<PurchaseEntitlement>>(
+                    stream: account.entitlements(),
+                    builder: (context, entitlementSnapshot) {
+                      final active = entitlementSnapshot.data
+                              ?.where((item) => item.active)
+                              .length ??
+                          0;
+                      return ListTile(
+                        leading: const Icon(Icons.shopping_bag_outlined),
+                        title: const Text('Purchase entitlement'),
+                        subtitle: Text(active == 0
+                            ? 'Belum ada pembelian aktif'
+                            : '$active pembelian aktif'),
+                      );
+                    },
+                  ),
+                ListTile(
+                  onTap: user == null ? null : syncNow,
+                  leading: const Icon(Icons.sync),
+                  title: const Text('Sync'),
+                  subtitle: Text(user == null
+                      ? 'Data tersimpan lokal di perangkat ini'
+                      : 'Profil dan progress tersimpan di cloud'),
+                ),
+                const SizedBox(height: 12),
+                if (user == null)
+                  _PrimaryButton('Buat Akun / Masuk', openAuth)
+                else
+                  _PrimaryButton('Keluar dari Akun', () async {
+                    await account.signOut();
+                    if (mounted) setState(() {});
+                  }, outline: true),
+              ],
+            ),
+          );
+        },
+      );
 }
 
 class _PrimaryButton extends StatelessWidget {
@@ -958,7 +1451,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
   Future<void> loadTiming() async {
     try {
       if (widget.story.timingAsset == null) return;
-      final contents = await rootBundle.loadString(widget.story.timingAsset!);
+      final timingPath = widget.story.timingAsset!;
+      final contents = _isRemotePath(timingPath)
+          ? (await http.get(Uri.parse(timingPath))).body
+          : await rootBundle.loadString(timingPath);
       final audited = StoryTimeline.fromMap(jsonDecode(contents),
           pages: widget.story.pages);
       if (mounted) setState(() => timeline = audited);
@@ -1003,7 +1499,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
         await player.setReleaseMode(ReleaseMode.stop);
         // Match Dunia Pinta: start the source at the selected page position.
         await player.play(
-          AssetSource(widget.story.audio!.replaceFirst('assets/', '')),
+          contentAudioSource(widget.story.audio!),
           position: Duration(milliseconds: timeline?.starts[startingPage] ?? 0),
         );
         sourceReady = true;
@@ -1060,8 +1556,22 @@ class _ReaderScreenState extends State<ReaderScreen> {
     }
   }
 
-  Future<void> markRead() =>
-      widget.prefs.setBool('read_${widget.story.id}', true);
+  Future<void> markRead() async {
+    await widget.prefs.setBool(
+      localReadKey(widget.story.id, widget.prefs),
+      true,
+    );
+    try {
+      await ParentAccountService.instance.markStoryRead(
+        widget.story.id,
+        widget.prefs,
+        widget.story.pages.length - 1,
+      );
+    } catch (error) {
+      debugPrint('Cloud reading progress sync unavailable: $error');
+    }
+  }
+
   @override
   void dispose() {
     unawaited(positionSub?.cancel());
@@ -1099,8 +1609,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       borderRadius: BorderRadius.circular(23),
                       child: SizedBox.square(
                           dimension: imageSize,
-                          child: Image.asset(widget.story.pages[page].image,
-                              fit: BoxFit.contain)))),
+                          child:
+                              contentImage(widget.story.pages[page].image)))),
               const SizedBox(height: 10),
               Expanded(
                   child: Container(

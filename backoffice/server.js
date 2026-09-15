@@ -2,12 +2,15 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const {randomUUID} = require('crypto');
+const {execFile} = require('child_process');
+const {promisify} = require('util');
 
 const project = path.resolve(process.env.GEMBALA_PROJECT_ROOT || path.join(__dirname, '..'));
 const port = Number(process.env.GEMBALA_BACKOFFICE_PORT || 57183);
 const content = path.join(project, 'assets', 'content');
 const catalogFile = path.join(content, 'catalog.json');
 const maxBody = 120 * 1024 * 1024;
+const runFile = promisify(execFile);
 const json = (res, status, value) => {
   res.writeHead(status, {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store'});
   res.end(JSON.stringify(value));
@@ -215,6 +218,21 @@ function deleteStory(id) {
   return {id, archivedTo: archive?.directory || null, note};
 }
 
+async function publishContent() {
+  const script = path.join(project, 'tool', 'publish_content_r2.mjs');
+  const {stdout, stderr} = await runFile(process.execPath, [script], {
+    cwd: project,
+    timeout: 20 * 60 * 1000,
+    maxBuffer: 4 * 1024 * 1024,
+    windowsHide: true,
+  });
+  return {
+    ok: true,
+    note: 'Konten lokal sudah dipublikasikan ke Cloudflare R2.',
+    output: `${stdout}${stderr}`.trim(),
+  };
+}
+
 http.createServer(async (req, res) => {
   try {
     if (req.method === 'GET' && req.url === '/') {
@@ -226,6 +244,7 @@ http.createServer(async (req, res) => {
       return fs.createReadStream(path.join(project, 'assets', 'fonts', 'Fredoka-Regular.ttf')).pipe(res);
     }
     if (req.method === 'GET' && req.url === '/api/catalog') return json(res, 200, readCatalog());
+    if (req.method === 'POST' && req.url === '/api/publish') return json(res, 200, await publishContent());
     if (req.method === 'POST' && (req.url === '/api/story' || req.url === '/api/verse')) {
       const input = await receive(req);
       return json(res, 201, saveUpload(req.url.endsWith('story') ? 'story' : 'verse', input));

@@ -9,7 +9,7 @@
 - Content Worker: `https://api-gembalakecil.duniapinta.my.id`
 - Worker admin secret: configured in Cloudflare secret storage
 
-The Flutter app initializes Firebase at startup. Parent signup/profile synchronization and remote content loading are intentionally separate implementation steps.
+The Flutter app initializes Firebase at startup. Parent signup/login, password reset, email verification, child profiles, per-child reading progress, and remote content loading with local fallback are implemented.
 
 ## Responsibility split
 
@@ -89,10 +89,10 @@ Admin endpoints require `Authorization: Bearer <ADMIN_TOKEN>`:
 
 1. Provision Firebase projects and deploy Firestore rules.
 2. Generate `lib/firebase_options.dart` with FlutterFire.
-3. Wire the existing optional parent-account screen to Firebase Auth and migrate the local child profile after sign-in.
-4. Provision R2 and deploy the Worker.
-5. Add remote-first catalog loading with bundled local fallback.
-6. Update the backoffice to publish immutable revisioned assets, then publish `catalog.json` last.
-7. Connect verified App Store/Play purchase webhooks to trusted entitlement writes.
+3. Wire the existing optional parent-account screen to Firebase Auth and migrate the local child profile after sign-in. (Done)
+4. Provision R2 and deploy the Worker. (Done)
+5. Add remote-first catalog loading with bundled local fallback. (Done)
+6. Update the backoffice to publish immutable revisioned assets, then publish `catalog.json` last. (Done)
+7. Connect verified App Store/Play purchase webhooks to trusted entitlement writes. (Pending store setup)
 
 Never grant premium based only on a value written by the Flutter client.

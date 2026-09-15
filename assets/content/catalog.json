@@ -240,6 +240,66 @@
         }
       ],
       "isFree": true
+    },
+    {
+      "id": "daniel-di-kandang-singa",
+      "title": "Daniel di Kandang Singa",
+      "reference": "Daniel 6",
+      "summary": "Tuhan selalu mendengar doa kita dan menolong kita untuk tetap berani dan setia.",
+      "cover": "assets/content/daniel-di-kandang-singa-cover.png",
+      "audio": "assets/content/daniel-di-kandang-singa-narration.mp3",
+      "timingAsset": "assets/content/daniel-di-kandang-singa-edit-83e2919e-9c32-4626-9340-78c003bbc9d0-timing.json",
+      "pages": [
+        {
+          "text": "Daniel adalah seorang yang bijaksana dan dapat dipercaya.\nRaja Darius sangat menyukai Daniel dan memberinya tugas penting.\nDaniel selalu berusaha melakukan yang benar.",
+          "image": "assets/content/daniel-di-kandang-singa-page-1.png"
+        },
+        {
+          "text": "Beberapa pejabat menjadi iri kepada Daniel.\nMereka mencoba mencari kesalahan Daniel, tetapi tidak menemukannya.\nAkhirnya mereka membuat sebuah rencana untuk menjebaknya.",
+          "image": "assets/content/daniel-di-kandang-singa-page-2.png"
+        },
+        {
+          "text": "Mereka meminta raja membuat aturan baru.\nSelama tiga puluh hari, semua orang hanya boleh berdoa kepada raja.\nSiapa yang melanggar akan dimasukkan ke kandang singa.",
+          "image": "assets/content/daniel-di-kandang-singa-page-3.png"
+        },
+        {
+          "text": "Daniel mendengar tentang aturan itu.\nTetapi Daniel tetap berdoa kepada Tuhan seperti biasanya.\nIa percaya bahwa Tuhan selalu mendengarnya.",
+          "image": "assets/content/daniel-di-kandang-singa-page-4.png"
+        },
+        {
+          "text": "Para pejabat melihat Daniel sedang berdoa.\nMereka segera pergi kepada raja dan mengatakan bahwa Daniel telah melanggar aturan.\nRaja menjadi sangat sedih mendengarnya.",
+          "image": "assets/content/daniel-di-kandang-singa-page-5.png"
+        },
+        {
+          "text": "Raja ingin menolong Daniel, tetapi aturan itu tidak dapat dibatalkan.\nAkhirnya Daniel harus dimasukkan ke kandang singa.\nRaja berkata, “Semoga Tuhan yang kaupercayai menyelamatkanmu.”",
+          "image": "assets/content/daniel-di-kandang-singa-page-6.png"
+        },
+        {
+          "text": "Malam itu Daniel berada bersama singa-singa.\nTetapi Tuhan mengirim malaikat-Nya untuk menjaga Daniel.\nSinga-singa itu tidak menyakitinya.",
+          "image": "assets/content/daniel-di-kandang-singa-page-7.png"
+        },
+        {
+          "text": "Raja Darius tidak dapat tidur sepanjang malam.\nPagi-pagi sekali ia bergegas menuju kandang singa.\nIa memanggil Daniel dengan penuh harap.",
+          "image": "assets/content/daniel-di-kandang-singa-page-8.png"
+        },
+        {
+          "text": "Daniel menjawab bahwa ia masih hidup.\nTuhan telah mengirim malaikat-Nya dan menutup mulut singa-singa itu.\nDaniel sama sekali tidak terluka.",
+          "image": "assets/content/daniel-di-kandang-singa-page-9.png"
+        },
+        {
+          "text": "Raja sangat gembira melihat Daniel selamat.\nIa memerintahkan agar Daniel segera dikeluarkan dari kandang singa.\nSemua orang melihat bahwa Daniel telah dilindungi Tuhan.",
+          "image": "assets/content/daniel-di-kandang-singa-page-10.png"
+        },
+        {
+          "text": "Raja Darius kemudian memuji Tuhan yang disembah Daniel.\nIa melihat bahwa Tuhan hidup dan berkuasa.\nDaniel pun terus hidup dengan setia kepada Tuhan.",
+          "image": "assets/content/daniel-di-kandang-singa-page-11.png"
+        },
+        {
+          "text": "Daniel belajar bahwa ia dapat tetap percaya kepada Tuhan bahkan ketika keadaan terasa menakutkan.\nKita juga dapat berdoa dan tetap melakukan yang benar.\nPesan Hari Ini: Tuhan selalu mendengar doa kita dan menolong kita untuk tetap berani dan setia.",
+          "image": "assets/content/daniel-di-kandang-singa-page-12.png"
+        }
+      ],
+      "isFree": true
     }
   ],
   "verses": []

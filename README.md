@@ -28,10 +28,10 @@ flutter build web --no-pub
 node preview-server.js
 ```
 
-Audio cerita pertama kini memakai timestamp kata hasil audit lokal di `assets/story/timing.json`. Hasil audit dan dua titik yang perlu dengar manual ada di `audit/story_audio_report.md`. Pendaftaran akun, pembelian, dan sinkronisasi belum tersambung ke backend; UI menjelaskan status ini saat tombol akun ditekan.
+Audio cerita pertama kini memakai timestamp kata hasil audit lokal di `assets/story/timing.json`. Hasil audit dan dua titik yang perlu dengar manual ada di `audit/story_audio_report.md`. Pendaftaran/login akun orang tua, profil anak, reset password, dan sinkronisasi progress sudah tersambung ke Firebase. Pembelian store belum diaktifkan; entitlement hanya dapat ditulis oleh backend tepercaya.
 
 Backoffice upload cerita dan Ayat Hafalan tersedia di `http://127.0.0.1:57183/` ketika `node backoffice/server.js` dijalankan. Lihat `backoffice/README.md` untuk format konten dan timing.
 
 Asset story yang dipakai berada di `assets/story/`, sedangkan logo dan mascot berada di `assets/brand/`.
 
-Fondasi backend tersedia di `firebase.json`, `firestore.rules`, dan `cloudflare/content-worker/`. Firebase project `gembala-kecil` sudah terhubung untuk Web, Android, dan iOS; Firestore rules sudah aktif. Cloudflare Worker/R2 tersedia di `https://api-gembalakecil.duniapinta.my.id`. Wiring form akun, sinkronisasi profil, katalog cloud, dan purchase verification masih menjadi tahap implementasi berikutnya. Lihat `docs/backend-setup.md` untuk arsitektur lengkap.
+Fondasi backend tersedia di `firebase.json`, `firestore.rules`, dan `cloudflare/content-worker/`. Firebase project `gembala-kecil` sudah terhubung untuk Web, Android, dan iOS; Firestore rules sudah aktif. Cloudflare Worker/R2 tersedia di `https://api-gembalakecil.duniapinta.my.id`. Aplikasi memuat katalog cloud dengan fallback bundle lokal, sedangkan backoffice memiliki tombol publish R2. Purchase verification masih menjadi tahap berikutnya. Lihat `docs/backend-setup.md` untuk arsitektur lengkap.

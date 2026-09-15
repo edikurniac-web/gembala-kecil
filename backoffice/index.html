@@ -70,7 +70,7 @@
       </form>
       <div id="notice" class="notice" role="status"></div>
     </section>
-    <aside class="panel"><h2 style="margin-top:0">Konten tersimpan</h2><div id="counts"></div><div id="items"></div><div class="info">Simpan perubahan → jalankan <code>flutter build web --no-pub</code> → muat ulang preview di port 57182. Cerita yang dihapus dipindahkan ke <code>assets/content/.trash/</code>.</div></aside>
+    <aside class="panel"><h2 style="margin-top:0">Konten tersimpan</h2><div id="counts"></div><button type="button" id="publish" class="submit">Publish ke Cloudflare</button><p class="hint">Publikasi mengunggah asset aktif dan katalog ke aplikasi online.</p><div id="items"></div><div class="info">Simpan perubahan lokal → klik <strong>Publish ke Cloudflare</strong>. Cerita yang dihapus dipindahkan ke <code>assets/content/.trash/</code>.</div></aside>
   </div>
   <script>
     const $ = selector => document.querySelector(selector);
@@ -189,8 +189,22 @@
         await refresh();
       } catch (error) { showNotice(error.message, true); }
     }
+    async function publishContent() {
+      const button = $('#publish');
+      button.disabled = true;
+      button.textContent = 'Publishing…';
+      showNotice('Mengunggah asset dan katalog. Jangan tutup backoffice.');
+      try {
+        const response = await fetch('/api/publish', {method:'POST'});
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error || 'Publish gagal');
+        showNotice(result.note);
+      } catch (error) { showNotice(error.message, true); }
+      finally { button.disabled = false; button.textContent = 'Publish ke Cloudflare'; }
+    }
     document.querySelectorAll('.tab').forEach(button => button.onclick = () => selectTab(button.dataset.tab));
     $('#cancelEdit').onclick = cancelEdit;
+    $('#publish').onclick = publishContent;
     $('#items').onclick = event => {
       const edit = event.target.closest('[data-edit]');
       const remove = event.target.closest('[data-delete]');

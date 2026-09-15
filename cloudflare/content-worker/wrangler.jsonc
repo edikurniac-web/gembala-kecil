@@ -16,6 +16,6 @@
     }
   ],
   "vars": {
-    "ALLOWED_ORIGINS": "http://127.0.0.1:57182,https://gembalakecil.duniapinta.my.id"
+    "ALLOWED_ORIGINS": "http://127.0.0.1:57182,https://gembalakecil.duniapinta.my.id,https://gembala-kecil.web.app,https://gembala-kecil.firebaseapp.com"
   }
 }

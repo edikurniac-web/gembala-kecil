@@ -51,4 +51,19 @@ void main() {
     expect(find.text('Siapa nama panggilanmu?'), findsNothing);
     expect(find.textContaining('Halo, Dante!'), findsOneWidget);
   });
+
+  testWidgets('parent auth screen supports optional signup and login',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'child_name': 'Dante'});
+    final prefs = await SharedPreferences.getInstance();
+    await tester.pumpWidget(MaterialApp(
+      home: ParentAuthScreen(childName: 'Dante', prefs: prefs),
+    ));
+    expect(find.byKey(const Key('parent-email-input')), findsOneWidget);
+    expect(find.byKey(const Key('parent-password-input')), findsOneWidget);
+    expect(find.text('Buat Akun Orang Tua'), findsOneWidget);
+    await tester.tap(find.text('Masuk'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lupa password?'), findsOneWidget);
+  });
 }
