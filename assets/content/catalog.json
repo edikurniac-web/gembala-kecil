@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "stories": [
+    {
+      "id": "daud-dan-goliat",
+      "title": "Daud dan Goliat",
+      "reference": "1 Samuel 17",
+      "summary": "Bersama Tuhan, kita tidak perlu takut!",
+      "cover": "assets/content/daud-dan-goliat-cover.png",
+      "audio": "assets/content/daud-dan-goliat-narration.mp3",
+      "timingAsset": "assets/content/daud-dan-goliat-timing.json",
+      "pages": [
+        {
+          "text": "Bangsa Israel sedang berhadapan dengan tentara Filistin.\nDi antara mereka ada seorang prajurit yang sangat besar bernama Goliat.\nIa membuat banyak orang merasa takut.",
+          "image": "assets/content/daud-dan-goliat-page-1.png"
+        },
+        {
+          "text": "Setiap hari, Goliat menantang bangsa Israel.\nIa meminta seseorang maju untuk melawannya.\nTetapi tidak ada yang berani.",
+          "image": "assets/content/daud-dan-goliat-page-2.png"
+        },
+        {
+          "text": "Sementara itu, Daud masih muda dan bekerja menjaga domba ayahnya.\nSuatu hari, ayahnya menyuruh Daud mengantar makanan untuk kakak-kakaknya.\nMereka sedang bersama tentara Israel.",
+          "image": "assets/content/daud-dan-goliat-page-3.png"
+        },
+        {
+          "text": "Saat tiba di perkemahan, Daud mendengar Goliat berteriak menantang bangsa Israel.\nDaud melihat semua orang takut kepadanya.\nDaud heran karena Goliat berani menghina umat Tuhan.",
+          "image": "assets/content/daud-dan-goliat-page-4.png"
+        },
+        {
+          "text": "Daud berkata bahwa ia mau menghadapi Goliat.\nOrang-orang terkejut karena Daud masih sangat muda.\nTetapi Daud percaya Tuhan akan menolongnya.",
+          "image": "assets/content/daud-dan-goliat-page-5.png"
+        },
+        {
+          "text": "Raja Saul mencoba memberi Daud baju perang.\nBaju itu terasa terlalu besar dan berat untuk Daud.\nDaud memilih pergi dengan cara yang biasa ia lakukan.",
+          "image": "assets/content/daud-dan-goliat-page-6.png"
+        },
+        {
+          "text": "Daud membawa tongkat, umban, dan lima batu halus dari sungai.\nIa berjalan maju menemui Goliat.\nDaud tidak mengandalkan kekuatannya sendiri.",
+          "image": "assets/content/daud-dan-goliat-page-7.png"
+        },
+        {
+          "text": "Goliat menertawakan Daud karena ia masih muda.\nTetapi Daud berkata bahwa ia datang dengan percaya kepada Tuhan.\nDaud yakin Tuhan lebih besar daripada rasa takutnya.",
+          "image": "assets/content/daud-dan-goliat-edit-a74498f4-cc08-4236-8fd4-ef51ffeea4ad-page-8.png"
+        },
+        {
+          "text": "Daud mengambil satu batu dan memasukkannya ke dalam umban.\nIa memutarnya lalu melepaskan batu itu.\nBatu itu mengenai Goliat.",
+          "image": "assets/content/daud-dan-goliat-edit-a74498f4-cc08-4236-8fd4-ef51ffeea4ad-page-9.png"
+        },
+        {
+          "text": "Goliat jatuh ke tanah.\nTentara Israel bersorak karena mereka melihat Tuhan menolong Daud.\nRasa takut mereka berubah menjadi keberanian.",
+          "image": "assets/content/daud-dan-goliat-page-10.png"
+        },
+        {
+          "text": "Daud menang bukan karena ia paling besar atau paling kuat.\nIa menang karena berani percaya kepada Tuhan.\nTuhan menyertai Daud.",
+          "image": "assets/content/daud-dan-goliat-page-11.png"
+        },
+        {
+          "text": "Daud mengajarkan bahwa kita tidak harus menjadi besar untuk berani.\nKita dapat menghadapi rasa takut dengan percaya kepada Tuhan.\nPesan Hari Ini: Dengan Tuhan, kita tidak perlu takut.",
+          "image": "assets/content/daud-dan-goliat-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "tuhan-menciptakan-dunia",
+      "title": "Tuhan Menciptakan Dunia",
+      "reference": "Kejadian 1-2",
+      "summary": "Tuhan sudah menciptakan dunia dengan sangat baik.",
+      "cover": "assets/content/tuhan-menciptakan-dunia-cover.png",
+      "audio": "assets/content/tuhan-menciptakan-dunia-narration.mp3",
+      "timingAsset": "assets/content/tuhan-menciptakan-dunia-edit-14c0e77b-b493-4cb5-9e18-b8e827f2b2c7-timing.json",
+      "pages": [
+        {
+          "text": "Pada mulanya, belum ada bumi, langit, laut, atau manusia.\nSemuanya masih gelap dan kosong.\nLalu Tuhan mulai menciptakan dunia.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-1.png"
+        },
+        {
+          "text": "Tuhan berkata, “Jadilah terang.”\nMaka terang pun jadi.\nTuhan melihat bahwa terang itu baik.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-2.png"
+        },
+        {
+          "text": "Tuhan memisahkan terang dari gelap.\nTerang disebut siang, dan gelap disebut malam.\nHari pertama pun selesai.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-3.png"
+        },
+        {
+          "text": "Lalu Tuhan menciptakan langit.\nLangit terbentang luas di atas bumi.\nAwan-awan pun ada di sana.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-4.png"
+        },
+        {
+          "text": "Tuhan mengumpulkan air sehingga daratan muncul.\nDaratan disebut bumi, dan kumpulan air disebut laut.\nTuhan melihat bahwa semuanya baik.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-5.png"
+        },
+        {
+          "text": "Kemudian Tuhan membuat rumput, bunga, dan pohon-pohon.\nAda tumbuhan kecil dan pohon besar yang penuh buah.\nBumi mulai tampak indah dan hidup.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-6.png"
+        },
+        {
+          "text": "Tuhan menciptakan matahari untuk siang hari.\nTuhan juga menciptakan bulan dan bintang-bintang untuk malam hari.\nLangit pun bersinar dengan indah.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-7.png"
+        },
+        {
+          "text": "Setelah itu, Tuhan menciptakan ikan-ikan di laut.\nTuhan juga menciptakan burung-burung yang terbang di langit.\nSemuanya bergerak dengan riang.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-8.png"
+        },
+        {
+          "text": "Lalu Tuhan menciptakan berbagai binatang di darat.\nAda yang besar, ada yang kecil, ada yang jinak, dan ada yang liar.\nTuhan melihat bahwa semuanya baik.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-9.png"
+        },
+        {
+          "text": "Terakhir, Tuhan menciptakan manusia.\nTuhan menciptakan laki-laki dan perempuan untuk hidup bersama-Nya.\nTuhan sangat mengasihi mereka.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-10.png"
+        },
+        {
+          "text": "Tuhan melihat semua yang sudah diciptakan-Nya.\nLangit, bumi, laut, tumbuhan, binatang, dan manusia semuanya sangat baik.\nPada hari ketujuh, Tuhan beristirahat.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-11.png"
+        },
+        {
+          "text": "Dunia yang indah ini adalah ciptaan Tuhan.\nSemua yang Tuhan buat baik dan penuh kasih.\nPesan Hari Ini: Tuhan sudah menciptakan dunia dengan sangat baik.",
+          "image": "assets/content/tuhan-menciptakan-dunia-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "bahtera-nuh-yang-besar",
+      "title": "Bahtera Nuh yang Besar",
+      "reference": "Kejadian 6:9–9:17",
+      "summary": "Kita dapat selalu percaya dan taat kepada Tuhan, bahkan ketika kita belum mengerti semuanya.",
+      "cover": "assets/content/bahtera-nuh-yang-besar-cover.png",
+      "audio": "assets/content/bahtera-nuh-yang-besar-narration.mp3",
+      "timingAsset": "assets/content/bahtera-nuh-yang-besar-timing.json",
+      "pages": [
+        {
+          "text": "Dahulu sekali, hiduplah seorang laki-laki baik bernama Nuh.\nNuh mengasihi Tuhan dan selalu berusaha melakukan yang benar.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-1.png"
+        },
+        {
+          "text": "Suatu hari, Tuhan berbicara kepada Nuh.\nTuhan berkata bahwa hujan besar akan datang dan menutupi bumi.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-2.png"
+        },
+        {
+          "text": "Tuhan meminta Nuh membuat sebuah bahtera yang sangat besar.\nBahtera itu akan melindungi Nuh, keluarganya, dan banyak binatang.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-3.png"
+        },
+        {
+          "text": "Nuh mulai membangun bahtera seperti yang Tuhan perintahkan.\nIa bekerja dengan tekun meskipun pekerjaan itu sangat besar.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-4.png"
+        },
+        {
+          "text": "Setelah bahtera selesai, binatang-binatang datang.\nAda gajah, singa, burung, kelinci, dan banyak binatang lainnya.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-5.png"
+        },
+        {
+          "text": "Nuh dan keluarganya masuk ke dalam bahtera.\nSemua binatang juga masuk dan mendapat tempat yang aman.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-6.png"
+        },
+        {
+          "text": "Tak lama kemudian, hujan mulai turun.\nHujan turun terus-menerus hingga air semakin tinggi.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-7.png"
+        },
+        {
+          "text": "Bahtera Nuh mulai mengapung di atas air.\nDi dalam bahtera, Nuh dan keluarganya tetap percaya kepada Tuhan.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-8.png"
+        },
+        {
+          "text": "Setelah waktu yang lama, hujan akhirnya berhenti.\nAir perlahan-lahan mulai surut.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-9.png"
+        },
+        {
+          "text": "Nuh mengirim seekor burung untuk melihat apakah tanah sudah kering.\nSuatu hari, burung itu kembali membawa sehelai daun zaitun.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-10.png"
+        },
+        {
+          "text": "Akhirnya, Nuh dan keluarganya dapat keluar dari bahtera.\nMereka bersyukur karena Tuhan telah menjaga mereka.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-11.png"
+        },
+        {
+          "text": "Di langit muncul pelangi yang indah sebagai tanda janji Tuhan.\nNuh belajar bahwa ia dapat mempercayai Tuhan dan menaati-Nya.\nPesan Hari Ini: Kita dapat percaya dan taat kepada Tuhan, bahkan ketika kita belum mengerti semuanya.",
+          "image": "assets/content/bahtera-nuh-yang-besar-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "yunus-dan-ikan-besar",
+      "title": "Yunus dan Ikan Besar",
+      "reference": "Yunus 1–4",
+      "summary": "Tuhan mengasihi kita dan mengajarkan kita untuk taat kepada-Nya.",
+      "cover": "assets/content/yunus-dan-ikan-besar-cover.png",
+      "audio": "assets/content/yunus-dan-ikan-besar-narration.mp3",
+      "timingAsset": "assets/content/yunus-dan-ikan-besar-timing.json",
+      "pages": [
+        {
+          "text": "Tuhan berkata kepada Yunus, “Pergilah ke kota Niniwe.”\nTuhan ingin Yunus mengingatkan orang-orang di sana supaya berhenti berbuat jahat.\nTetapi Yunus tidak mau pergi.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-1.png"
+        },
+        {
+          "text": "Yunus malah pergi ke pelabuhan dan naik sebuah kapal.\nIa ingin pergi jauh ke arah yang berlawanan dari Niniwe.\nYunus mencoba melarikan diri dari tugas yang Tuhan berikan.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-2.png"
+        },
+        {
+          "text": "Di tengah perjalanan, datanglah badai yang sangat besar.\nAngin bertiup kencang dan ombak mengguncang kapal.\nSemua orang di kapal menjadi takut.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-3.png"
+        },
+        {
+          "text": "Yunus tahu mengapa badai itu datang.\nIa berkata kepada para pelaut bahwa ia sedang lari dari Tuhan.\nYunus meminta mereka melemparkannya ke laut.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-4.png"
+        },
+        {
+          "text": "Akhirnya Yunus dilemparkan ke dalam laut.\nTiba-tiba angin berhenti dan laut menjadi tenang.\nPara pelaut melihat betapa besar kuasa Tuhan.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-5.png"
+        },
+        {
+          "text": "Tuhan mengirim seekor ikan besar untuk menelan Yunus.\nYunus berada di dalam ikan itu selama tiga hari dan tiga malam.\nDi sana, Yunus mulai berdoa kepada Tuhan.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-6.png"
+        },
+        {
+          "text": "Yunus mengakui kesalahannya dan meminta pertolongan Tuhan.\nTuhan mendengar doa Yunus.\nIkan besar itu kemudian mengeluarkan Yunus ke daratan.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-7.png"
+        },
+        {
+          "text": "Tuhan kembali berkata, “Pergilah ke Niniwe.”\nKali ini Yunus memilih untuk taat.\nIa pergi ke kota itu dan menyampaikan pesan Tuhan.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-8.png"
+        },
+        {
+          "text": "Orang-orang Niniwe mendengarkan Yunus.\nMereka menyesali perbuatan mereka dan berbalik dari kejahatan.\nTuhan melihat perubahan hati mereka dan mengampuni mereka.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-9.png"
+        },
+        {
+          "text": "Tetapi Yunus justru merasa kesal karena Tuhan mengampuni Niniwe.\nSaat Yunus duduk di luar kota, Tuhan menumbuhkan sebuah tanaman untuk menaunginya.\nYunus sangat senang mendapat tempat yang teduh.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-10.png"
+        },
+        {
+          "text": "Keesokan harinya tanaman itu menjadi layu, dan Yunus merasa sedih.\nTuhan mengingatkan Yunus bahwa ia saja menyayangi sebuah tanaman.\nTerlebih lagi, Tuhan mengasihi begitu banyak orang di Niniwe.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-11.png"
+        },
+        {
+          "text": "Yunus belajar bahwa Tuhan penuh kasih dan memberi kesempatan kepada orang untuk berubah.\nKita pun dapat belajar mendengarkan Tuhan dan melakukan yang benar.\nPesan Hari Ini: Tuhan mengasihi kita dan mengajarkan kita untuk taat kepada-Nya.",
+          "image": "assets/content/yunus-dan-ikan-besar-page-12.png"
+        }
+      ],
+      "isFree": true
+    }
+  ],
+  "verses": []
+}

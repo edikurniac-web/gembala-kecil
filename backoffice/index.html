@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gembala Kecil — Backoffice</title>
+  <style>
+    @font-face { font-family: Fredoka; src: url('/font.ttf'); }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f9f6ef; color: #1e344e; font-family: Fredoka, Arial, sans-serif; }
+    header { background: white; padding: 20px 28px; border-bottom: 1px solid #e9e3d9; }
+    h1 { margin: 0; font-size: 28px; }
+    header p { margin: 5px 0 0; color: #67788a; }
+    .wrap { max-width: 1120px; margin: 28px auto; padding: 0 18px; display: grid; grid-template-columns: minmax(0,2fr) minmax(260px,1fr); gap: 22px; }
+    .panel { background: white; border: 1px solid #ece3d6; border-radius: 22px; padding: 24px; box-shadow: 0 6px 20px #1e344e08; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+    button { font: inherit; cursor: pointer; }
+    .tab { border: 0; padding: 10px 17px; border-radius: 20px; background: #f0e9ff; color: #1e344e; }
+    .tab.active { background: #1d9ea2; color: white; }
+    label { display: block; font-weight: bold; margin: 15px 0 6px; }
+    input, textarea, select { width: 100%; font: inherit; color: #1e344e; border: 1px solid #dcdedc; border-radius: 12px; padding: 11px; background: white; }
+    textarea { min-height: 120px; resize: vertical; line-height: 1.35; }
+    input[type=file] { padding: 8px; }
+    input[type=checkbox] { width: auto; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .hint { font-size: 13px; color: #687889; margin: 5px 0; }
+    .submit { width: 100%; margin-top: 20px; padding: 13px; border: 0; border-radius: 24px; background: #ffcf48; color: #1e344e; font-weight: bold; }
+    .submit:disabled { opacity: .5; cursor: wait; }
+    .notice { padding: 12px; border-radius: 12px; margin-top: 14px; display: none; }
+    .notice.ok { display: block; background: #e2f5ef; color: #206f63; }
+    .notice.error { display: block; background: #ffe6e2; color: #b55040; }
+    .count { background: #fff0d3; padding: 6px 10px; border-radius: 14px; display: inline-block; margin: 4px 0 10px; }
+    .item { border-top: 1px solid #eee; padding: 12px 0; }
+    .item strong { display: block; }
+    .item small { color: #687889; }
+    .item button, .secondary { border: 1px solid #d5dfdf; border-radius: 10px; background: white; color: #1e344e; padding: 6px 10px; margin: 8px 6px 0 0; }
+    .item button.danger { color: #ae453d; border-color: #f0c4bf; }
+    .empty { color: #85909a; }
+    .info { background: #f0e9ff; border-radius: 15px; padding: 14px; line-height: 1.45; margin-top: 18px; }
+    .edit-banner { background: #e2f5ef; border-radius: 12px; padding: 10px; margin-bottom: 12px; }
+    #editImageFields label { font-weight: normal; margin: 10px 0 3px; }
+    [hidden] { display: none !important; }
+    @media(max-width:800px) { .wrap { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header><h1>Gembala Kecil · Backoffice</h1><p>Unggah dan kelola konten di project lokal. Preview Flutter diperbarui setelah build ulang.</p></header>
+  <div class="wrap">
+    <section class="panel">
+      <div class="tabs"><button class="tab active" data-tab="story">Cerita</button><button class="tab" data-tab="verse">Ayat Hafalan</button></div>
+      <form id="storyForm">
+        <div id="editBanner" class="edit-banner" hidden>Mengedit <strong id="editTitle"></strong>. File yang tidak dipilih tetap memakai versi lama. <button type="button" id="cancelEdit" class="secondary">Batal edit</button></div>
+        <div class="row"><div><label>Judul cerita</label><input name="title" required placeholder="Contoh: Daud dan Goliat"></div><div><label>Referensi Alkitab</label><input name="reference" required placeholder="Contoh: 1 Samuel 17:1–50"></div></div>
+        <label>Ringkasan</label><input name="summary" placeholder="Pesan singkat untuk anak">
+        <label>ID unik (opsional)</label><input name="id" placeholder="Otomatis dari judul">
+        <div class="row"><div><label>Cover PNG persegi</label><input type="file" name="cover" accept="image/png" required></div><div><label>Audio narasi MP3</label><input type="file" name="audio" accept="audio/mpeg,.mp3"></div></div>
+        <label>Teks halaman</label><textarea name="pageTexts" required placeholder="Teks halaman 1&#10;---&#10;Teks halaman 2"></textarea><p class="hint">Pisahkan halaman dengan baris --- . Saat edit, jumlah halaman tidak boleh berubah.</p>
+        <div id="newImages"><label>Gambar halaman PNG persegi</label><input type="file" name="pageImages" accept="image/png" multiple required><p class="hint">Jumlah gambar harus sama dengan halaman teks. Nama 01.png, 02.png, dst. memudahkan pengurutan.</p></div>
+        <div id="editImages" hidden><label>Ganti ilustrasi per halaman (opsional)</label><div id="editImageFields"></div></div>
+        <label>Timing kata JSON (wajib jika narasi atau teks berubah)</label><input type="file" name="timing" accept="application/json,.json"><p class="hint">Jika hanya mengganti ilustrasi, timing lama tetap dipakai.</p>
+        <label><input type="checkbox" name="isFree" checked> Cerita gratis</label>
+        <button class="submit">Simpan Cerita</button>
+      </form>
+      <form id="verseForm" hidden>
+        <div class="row"><div><label>Judul modul</label><input name="title" required placeholder="Kasih Tuhan"></div><div><label>Referensi ayat</label><input name="reference" required placeholder="Yohanes 3:16"></div></div>
+        <label>ID unik (opsional)</label><input name="id" placeholder="Otomatis dari judul">
+        <label>Teks ayat</label><textarea name="text" required placeholder="Teks ayat hafalan..."></textarea>
+        <div class="row"><div><label>Ilustrasi PNG persegi (opsional)</label><input type="file" name="image" accept="image/png"></div><div><label>Audio ayat MP3 (opsional)</label><input type="file" name="audio" accept="audio/mpeg,.mp3"></div></div>
+        <button class="submit">Simpan Ayat</button>
+      </form>
+      <div id="notice" class="notice" role="status"></div>
+    </section>
+    <aside class="panel"><h2 style="margin-top:0">Konten tersimpan</h2><div id="counts"></div><div id="items"></div><div class="info">Simpan perubahan → jalankan <code>flutter build web --no-pub</code> → muat ulang preview di port 57182. Cerita yang dihapus dipindahkan ke <code>assets/content/.trash/</code>.</div></aside>
+  </div>
+  <script>
+    const $ = selector => document.querySelector(selector);
+    let catalog = {stories: [], verses: []};
+    let editingId = null;
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    async function fileData(file) {
+      if (!file) return null;
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      return {name: file.name, base64};
+    }
+    function showNotice(message, error = false) {
+      $('#notice').textContent = message;
+      $('#notice').className = `notice ${error ? 'error' : 'ok'}`;
+    }
+    async function refresh() {
+      const response = await fetch('/api/catalog');
+      if (!response.ok) throw Error('Katalog tidak bisa dibaca.');
+      catalog = await response.json();
+      $('#counts').innerHTML = `<span class="count">${catalog.stories.length} cerita</span> <span class="count">${catalog.verses.length} ayat</span>`;
+      const stories = catalog.stories.map(item => `<div class="item"><strong>${escapeHtml(item.title)}</strong><small>Cerita · ${escapeHtml(item.reference)} · ${escapeHtml(item.id)}</small><div><button type="button" data-edit="${escapeHtml(item.id)}">Edit cerita</button><button type="button" class="danger" data-delete="${escapeHtml(item.id)}">Hapus cerita</button></div></div>`);
+      const verses = catalog.verses.map(item => `<div class="item"><strong>${escapeHtml(item.title)}</strong><small>Ayat · ${escapeHtml(item.reference)} · ${escapeHtml(item.id)}</small></div>`);
+      $('#items').innerHTML = [...stories, ...verses].join('') || '<p class="empty">Belum ada konten tambahan.</p>';
+    }
+    function selectTab(type) {
+      document.querySelectorAll('.tab').forEach(button => button.classList.toggle('active', button.dataset.tab === type));
+      $('#storyForm').hidden = type !== 'story';
+      $('#verseForm').hidden = type !== 'verse';
+      $('#notice').className = 'notice';
+    }
+    function cancelEdit() {
+      editingId = null;
+      const form = $('#storyForm');
+      form.reset();
+      form.elements.id.disabled = false;
+      form.elements.cover.required = true;
+      form.elements.pageImages.required = true;
+      $('#editBanner').hidden = true;
+      $('#editImages').hidden = true;
+      $('#newImages').hidden = false;
+      $('#editImageFields').replaceChildren();
+      form.querySelector('.submit').textContent = 'Simpan Cerita';
+    }
+    function startEdit(id) {
+      const item = catalog.stories.find(story => story.id === id);
+      if (!item) return showNotice('Cerita tidak ditemukan.', true);
+      cancelEdit();
+      selectTab('story');
+      editingId = id;
+      const f = $('#storyForm').elements;
+      f.title.value = item.title;
+      f.reference.value = item.reference;
+      f.summary.value = item.summary || '';
+      f.id.value = item.id;
+      f.id.disabled = true;
+      f.pageTexts.value = item.pages.map(page => page.text).join('\n---\n');
+      f.isFree.checked = item.isFree !== false;
+      f.cover.required = false;
+      f.pageImages.required = false;
+      $('#editBanner').hidden = false;
+      $('#editTitle').textContent = item.title;
+      $('#newImages').hidden = true;
+      $('#editImages').hidden = false;
+      $('#editImageFields').innerHTML = item.pages.map((_, i) => `<label>Halaman ${i + 1}</label><input type="file" accept="image/png" data-page="${i}">`).join('');
+      $('#storyForm .submit').textContent = 'Simpan Perubahan';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+    async function submit(form, type) {
+      const button = form.querySelector('.submit');
+      button.disabled = true;
+      $('#notice').className = 'notice';
+      try {
+        const f = form.elements;
+        const payload = {title: f.title.value, reference: f.reference.value, id: type === 'story' && editingId ? editingId : f.id.value};
+        if (type === 'story') {
+          payload.summary = f.summary.value;
+          payload.pageTexts = f.pageTexts.value;
+          payload.isFree = f.isFree.checked;
+          payload.cover = await fileData(f.cover.files[0]);
+          payload.audio = await fileData(f.audio.files[0]);
+          payload.pageImages = editingId
+            ? await Promise.all([...$('#editImageFields').querySelectorAll('input')].map(input => fileData(input.files[0])))
+            : await Promise.all([...f.pageImages.files].sort((a,b) => a.name.localeCompare(b.name, undefined, {numeric:true})).map(fileData));
+          if (f.timing.files[0]) payload.timing = JSON.parse(await f.timing.files[0].text());
+        } else {
+          payload.text = f.text.value;
+          payload.image = await fileData(f.image.files[0]);
+          payload.audio = await fileData(f.audio.files[0]);
+        }
+        const editing = type === 'story' && editingId;
+        const response = await fetch(editing ? `/api/story/${encodeURIComponent(editingId)}` : `/api/${type}`, {
+          method: editing ? 'PATCH' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error || 'Simpan gagal');
+        if (editing) cancelEdit(); else form.reset();
+        showNotice(`${result.item.title} tersimpan. ${result.note}`);
+        await refresh();
+      } catch (error) { showNotice(error.message, true); }
+      finally { button.disabled = false; }
+    }
+    async function deleteStory(id) {
+      const item = catalog.stories.find(story => story.id === id);
+      if (!item || !confirm(`Hapus cerita "${item.title}" dari aplikasi? File akan dipindahkan ke .trash dan dapat dipulihkan manual.`)) return;
+      try {
+        const response = await fetch(`/api/story/${encodeURIComponent(id)}`, {method:'DELETE'});
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error || 'Hapus gagal');
+        if (editingId === id) cancelEdit();
+        showNotice(`Cerita "${item.title}" dihapus dari katalog. File diarsipkan di ${result.archivedTo}. Build ulang preview untuk melihat perubahan.`);
+        await refresh();
+      } catch (error) { showNotice(error.message, true); }
+    }
+    document.querySelectorAll('.tab').forEach(button => button.onclick = () => selectTab(button.dataset.tab));
+    $('#cancelEdit').onclick = cancelEdit;
+    $('#items').onclick = event => {
+      const edit = event.target.closest('[data-edit]');
+      const remove = event.target.closest('[data-delete]');
+      if (edit) startEdit(edit.dataset.edit);
+      if (remove) deleteStory(remove.dataset.delete);
+    };
+    $('#storyForm').onsubmit = event => { event.preventDefault(); submit(event.currentTarget, 'story'); };
+    $('#verseForm').onsubmit = event => { event.preventDefault(); submit(event.currentTarget, 'verse'); };
+    refresh().catch(error => showNotice(error.message, true));
+  </script>
+</body>
+</html>
