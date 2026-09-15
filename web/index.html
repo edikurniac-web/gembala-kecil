@@ -31,8 +31,48 @@
 
   <title>gembala_kecil</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #fffaf0;
+    }
+    #flutter-startup {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 18px;
+      color: #1e344e;
+      font: 600 17px/1.4 system-ui, sans-serif;
+      text-align: center;
+    }
+    #flutter-startup img {
+      width: min(230px, 58vw);
+      height: auto;
+    }
+    #flutter-startup.failed .startup-dot {
+      display: none;
+    }
+    .startup-dot {
+      width: 30px;
+      height: 30px;
+      border: 4px solid #d9f0ec;
+      border-top-color: #1d9ea2;
+      border-radius: 50%;
+      animation: startup-spin .8s linear infinite;
+    }
+    @keyframes startup-spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
+  <div id="flutter-startup" role="status" aria-live="polite">
+    <img src="assets/assets/brand/logo.png" alt="Gembala Kecil">
+    <div class="startup-dot" aria-hidden="true"></div>
+    <div class="startup-copy">Menyiapkan cerita untukmu…</div>
+  </div>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
@@ -41,6 +81,6 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
-  <script src="flutter_bootstrap.js" async></script>
+  <script src="flutter_bootstrap.js?v=20260915-2" async></script>
 </body>
 </html>
