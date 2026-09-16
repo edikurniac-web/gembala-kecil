@@ -2,6 +2,8 @@
 
 App Flutter untuk cerita Alkitab anak. Preview lokal di `http://127.0.0.1:57182/` menyajikan hasil build Flutter web dari `build/web`.
 
+Untuk penggunaan harian tanpa terminal, double-click `START GEMBALA KECIL.vbs` di folder proyek. Launcher akan menghidupkan preview dan backoffice sebagai proses background lalu membuka kedua halaman.
+
 ## Flow yang sudah dibuat
 
 - Splash logo → onboarding nama panggilan.
