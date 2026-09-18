@@ -105,7 +105,7 @@ class ContentCatalog {
       final response = await http
           .get(Uri.parse('$contentApiBase/v1/catalog'))
           .timeout(const Duration(seconds: 4));
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 206) {
         throw StateError('Cloud catalog returned ${response.statusCode}.');
       }
       data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -134,4 +134,12 @@ class ContentCatalog {
           .toList(growable: false),
     );
   }
+}
+
+StoryBook storyOfTheDay(List<StoryBook> stories, DateTime now) {
+  if (stories.isEmpty) return StoryBook.builtIn;
+  final localDay = DateTime(now.year, now.month, now.day);
+  final dayNumber =
+      localDay.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay;
+  return stories[dayNumber % stories.length];
 }

@@ -80,4 +80,31 @@ void main() {
       'assets/story/COVER.png',
     );
   });
+
+  test('story of the day is stable for one day and advances the next day', () {
+    final stories = [
+      StoryBook.builtIn,
+      StoryBook.fromMap({
+        'id': 'cerita-kedua',
+        'title': 'Cerita Kedua',
+        'reference': 'Markus 1:1',
+        'summary': 'Pesan kedua.',
+        'cover': 'assets/content/cerita-kedua-cover.png',
+        'pages': [
+          {
+            'text': 'Satu halaman.',
+            'image': 'assets/content/cerita-kedua-page-1.png'
+          }
+        ],
+      }),
+    ];
+    final morning = DateTime(2026, 9, 18, 8);
+    final evening = DateTime(2026, 9, 18, 23, 59);
+    final tomorrow = DateTime(2026, 9, 19, 8);
+
+    expect(storyOfTheDay(stories, morning).id,
+        storyOfTheDay(stories, evening).id);
+    expect(storyOfTheDay(stories, tomorrow).id,
+        isNot(storyOfTheDay(stories, morning).id));
+  });
 }

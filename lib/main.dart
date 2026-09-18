@@ -21,7 +21,7 @@ const coral = Color(0xFFE98B72);
 const cream = Color(0xFFFFFCF5);
 const lavender = Color(0xFFF0E9FF);
 const gold = Color(0xFFFFCF48);
-late final ContentCatalog appCatalog;
+ContentCatalog appCatalog = const ContentCatalog([StoryBook.builtIn], []);
 
 bool _isRemotePath(String path) =>
     path.startsWith('https://') || path.startsWith('http://');
@@ -537,186 +537,191 @@ class HomeScreen extends StatelessWidget {
   final SharedPreferences prefs;
   final Future<void> Function(String)? onNameChanged;
   @override
-  Widget build(BuildContext context) => Scaffold(
-          body: Stack(fit: StackFit.expand, children: [
-        Image.asset('assets/brand/home_garden_watercolor.png',
-            fit: BoxFit.cover),
-        SafeArea(child: LayoutBuilder(builder: (context, size) {
-          final compact = size.maxHeight < 680;
-          return Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 14, 8),
-              child: Column(children: [
-                Row(children: [
-                  Image.asset('assets/brand/logo.png',
-                      width: compact ? 126 : 140,
-                      height: compact ? 56 : 63,
-                      fit: BoxFit.cover,
-                      alignment: const Alignment(0, .22)),
-                  const Spacer(),
-                  IconButton(
-                      key: const Key('parent-area'),
-                      tooltip: 'Area Orang Tua',
-                      onPressed: () async {
-                        final selected = await Navigator.push<String>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                ParentScreen(name: name, prefs: prefs),
-                          ),
-                        );
-                        if (selected != null && onNameChanged != null) {
-                          await onNameChanged!(selected);
-                        }
-                      },
-                      icon: const CircleAvatar(
-                          backgroundColor: Color(0xFFE5F3FF),
-                          child: Icon(Icons.person_rounded,
-                              color: Color(0xFF4088BA))))
-                ]),
-                Expanded(
-                    flex: 22,
-                    child: Stack(children: [
-                      Align(
-                          alignment: const Alignment(.88, .22),
-                          child: Image.asset('assets/brand/mascot_cutout.png',
-                              width: math.min(size.maxWidth * .44, 190),
-                              fit: BoxFit.contain)),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                              width: size.maxWidth * .6,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Halo, $name! 👋',
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                            fontSize: compact ? 23 : 27,
-                                            height: 1.0,
-                                            fontWeight: FontWeight.w700,
-                                            color: ink)),
-                                    const SizedBox(height: 7),
-                                    Text(
-                                        'Gembala punya cerita baru untukmu hari ini.',
-                                        style: TextStyle(
-                                            fontSize: compact ? 13 : 15,
-                                            height: 1.1,
-                                            color: ink)),
-                                  ]))),
-                    ])),
-                Expanded(
-                    flex: 43,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: const Color(0xB3FFFDF7),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: const Color(0xCCFFFFFF))),
-                      child: Row(children: [
-                        Expanded(
-                            flex: 47,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(18),
-                                child: Center(
-                                    child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Image.asset(storyCover,
-                                            fit: BoxFit.contain))))),
-                        const SizedBox(width: 9),
-                        Expanded(
-                            flex: 53,
+  Widget build(BuildContext context) {
+    final featuredStory = storyOfTheDay(appCatalog.stories, DateTime.now());
+    return Scaffold(
+        body: Stack(fit: StackFit.expand, children: [
+      Image.asset('assets/brand/home_garden_watercolor.png', fit: BoxFit.cover),
+      SafeArea(child: LayoutBuilder(builder: (context, size) {
+        final compact = size.maxHeight < 680;
+        return Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 14, 8),
+            child: Column(children: [
+              Row(children: [
+                Image.asset('assets/brand/logo.png',
+                    width: compact ? 126 : 140,
+                    height: compact ? 56 : 63,
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, .22)),
+                const Spacer(),
+                IconButton(
+                    key: const Key('parent-area'),
+                    tooltip: 'Area Orang Tua',
+                    onPressed: () async {
+                      final selected = await Navigator.push<String>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ParentScreen(name: name, prefs: prefs),
+                        ),
+                      );
+                      if (selected != null && onNameChanged != null) {
+                        await onNameChanged!(selected);
+                      }
+                    },
+                    icon: const CircleAvatar(
+                        backgroundColor: Color(0xFFE5F3FF),
+                        child: Icon(Icons.person_rounded,
+                            color: Color(0xFF4088BA))))
+              ]),
+              Expanded(
+                  flex: 22,
+                  child: Stack(children: [
+                    Align(
+                        alignment: const Alignment(1, -.08),
+                        child: Transform.translate(
+                            offset: const Offset(10, -7),
+                            child: Image.asset('assets/brand/mascot_cutout.png',
+                                width: math.min(size.maxWidth * .44, 190),
+                                fit: BoxFit.contain))),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                            width: size.maxWidth * .6,
                             child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFFFDACE),
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      child: const Text('▣  Cerita Hari Ini',
-                                          style: TextStyle(
-                                              color: Color(0xFFB85340),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w700))),
-                                  const SizedBox(height: 6),
-                                  Text(storyTitle,
-                                      maxLines: 3,
+                                  Text('Halo, $name! 👋',
+                                      maxLines: 2,
                                       style: TextStyle(
-                                          fontSize: compact ? 17 : 20,
-                                          height: 1,
+                                          fontSize: compact ? 23 : 27,
+                                          height: 1.0,
                                           fontWeight: FontWeight.w700,
                                           color: ink)),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                      'Ketika kita merasa takut, kita dapat tetap percaya kepada Yesus.',
-                                      maxLines: compact ? 2 : 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: compact ? 11 : 12,
-                                          height: 1.08,
-                                          color: ink)),
                                   const SizedBox(height: 7),
-                                  _MiniButton(
-                                      'Baca Cerita  →',
-                                      () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => StoryDetailScreen(
-                                                  prefs: prefs))),
-                                      filled: true),
-                                  const SizedBox(height: 5),
-                                  _MiniButton(
-                                      '🎧  Dibacakan Gembala',
-                                      () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => ReaderScreen(
-                                                  prefs: prefs,
-                                                  readAloud: true))),
-                                      filled: false),
-                                ])),
-                      ]),
-                    )),
-                const SizedBox(height: 10),
-                Expanded(
-                    flex: 29,
+                                  Text(
+                                      'Gembala punya cerita baru untukmu hari ini.',
+                                      style: TextStyle(
+                                          fontSize: compact ? 13 : 15,
+                                          height: 1.1,
+                                          color: ink)),
+                                ]))),
+                  ])),
+              Expanded(
+                  flex: 43,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: const Color(0xB3FFFDF7),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: const Color(0xCCFFFFFF))),
                     child: Row(children: [
                       Expanded(
-                          child: _HomeTile(
-                              title: 'Semua\nCerita',
-                              iconAsset:
-                                  'assets/brand/icons/semua_cerita_watercolor.png',
-                              color: const Color(0xB3FFFDF7),
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          StoryListScreen(prefs: prefs))))),
-                      const SizedBox(width: 10),
+                          flex: 47,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Center(
+                                  child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: contentImage(featuredStory.cover,
+                                          fit: BoxFit.contain))))),
+                      const SizedBox(width: 9),
                       Expanded(
-                          child: _HomeTile(
-                              title: 'Ayat\nHafalan',
-                              iconAsset:
-                                  'assets/brand/icons/ayat_hafalan_watercolor.png',
-                              color: const Color(0xB3FFFDF7),
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => const VerseScreen())))),
-                    ])),
-                if (!compact)
-                  const Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text('Bertumbuh dalam Kasih-Nya  ♥',
-                          style: TextStyle(
-                              fontSize: 11, color: Color(0xFF829987)))),
-              ]));
-        })),
-      ]));
+                          flex: 53,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFDDEFD8),
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
+                                    child: const Text('▣  Cerita Hari Ini',
+                                        style: TextStyle(
+                                            color: Color(0xFF4E7757),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700))),
+                                const SizedBox(height: 6),
+                                Text(featuredStory.title,
+                                    maxLines: 3,
+                                    style: TextStyle(
+                                        fontSize: compact ? 17 : 20,
+                                        height: 1,
+                                        fontWeight: FontWeight.w700,
+                                        color: ink)),
+                                const SizedBox(height: 5),
+                                Text(featuredStory.summary,
+                                    maxLines: compact ? 2 : 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: compact ? 11 : 12,
+                                        height: 1.08,
+                                        color: ink)),
+                                const SizedBox(height: 7),
+                                _MiniButton(
+                                    'Baca Cerita  →',
+                                    () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => StoryDetailScreen(
+                                                prefs: prefs,
+                                                story: featuredStory))),
+                                    filled: true),
+                                const SizedBox(height: 5),
+                                _MiniButton(
+                                    '🎧  Dibacakan Gembala',
+                                    () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => ReaderScreen(
+                                                prefs: prefs,
+                                                readAloud: true,
+                                                story: featuredStory))),
+                                    filled: false),
+                              ])),
+                    ]),
+                  )),
+              const SizedBox(height: 10),
+              Expanded(
+                  flex: 29,
+                  child: Row(children: [
+                    Expanded(
+                        child: _HomeTile(
+                            title: 'Semua\nCerita',
+                            iconAsset:
+                                'assets/brand/icons/semua_cerita_watercolor.png',
+                            color: const Color(0xB3FFFDF7),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        StoryListScreen(prefs: prefs))))),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: _HomeTile(
+                            title: 'Ayat\nHafalan',
+                            iconAsset:
+                                'assets/brand/icons/ayat_hafalan_watercolor.png',
+                            color: const Color(0xB3FFFDF7),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const VerseScreen())))),
+                  ])),
+              if (!compact)
+                const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text('Bertumbuh dalam Kasih-Nya  ♥',
+                        style:
+                            TextStyle(fontSize: 11, color: Color(0xFF829987)))),
+            ]));
+      })),
+    ]));
+  }
 }
 
 class _HomeTile extends StatelessWidget {

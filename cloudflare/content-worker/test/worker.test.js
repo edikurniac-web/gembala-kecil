@@ -22,7 +22,9 @@ function environment() {
           body: stored.bytes,
           size: stored.bytes.length,
           httpEtag: '"test-etag"',
-          range: null,
+          // R2 can expose full-object range metadata even when the request did
+          // not include a Range header. HTTP status must follow the request.
+          range: {offset: 0, length: stored.bytes.length},
           writeHttpMetadata(headers) {
             headers.set(
               'content-type',

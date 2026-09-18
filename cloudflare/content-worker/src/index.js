@@ -37,7 +37,10 @@ function safeKey(value) {
 }
 
 async function serveObject(request, env, key, cors) {
-  const object = await env.CONTENT.get(key, {range: request.headers});
+  const rangeRequested = request.headers.has('range');
+  const object = rangeRequested
+    ? await env.CONTENT.get(key, {range: request.headers})
+    : await env.CONTENT.get(key);
   if (!object) return json({error: 'Not found'}, 404, cors);
 
   const headers = new Headers(cors);
@@ -50,7 +53,7 @@ async function serveObject(request, env, key, cors) {
   );
 
   let status = 200;
-  if (object.range && 'offset' in object.range) {
+  if (rangeRequested && object.range && 'offset' in object.range) {
     const start = object.range.offset;
     const end = start + object.range.length - 1;
     headers.set('content-range', `bytes ${start}-${end}/${object.size}`);
