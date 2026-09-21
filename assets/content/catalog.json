@@ -300,7 +300,376 @@
         }
       ],
       "isFree": true
+    },
+    {
+      "id": "orang-samaria-yang-baik-hati",
+      "title": "Orang Samaria yang Baik Hati",
+      "reference": "Lukas 10:25–37",
+      "summary": "Tuhan mengajarkan kita untuk mengasihi dan menolong sesama.",
+      "cover": "assets/content/orang-samaria-yang-baik-hati-cover.png",
+      "audio": "assets/content/orang-samaria-yang-baik-hati-narration.mp3",
+      "timingAsset": "assets/content/orang-samaria-yang-baik-hati-timing.json",
+      "pages": [
+        {
+          "text": "Suatu hari, seseorang bertanya kepada Yesus, “Siapakah sesamaku?”\nYesus lalu menceritakan sebuah kisah.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-1.png"
+        },
+        {
+          "text": "Ada seorang laki-laki yang sedang berjalan dari Yerusalem menuju Yerikho.\nDi tengah perjalanan, beberapa perampok datang menyerangnya.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-2.png"
+        },
+        {
+          "text": "Mereka mengambil barang-barangnya dan meninggalkannya di tepi jalan.\nLaki-laki itu terluka dan tidak mampu melanjutkan perjalanan.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-3.png"
+        },
+        {
+          "text": "Tidak lama kemudian, seorang imam melewati jalan itu.\nIa melihat laki-laki yang terluka, tetapi terus berjalan.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-4.png"
+        },
+        {
+          "text": "Kemudian datang seorang Lewi.\nIa juga melihat laki-laki itu, tetapi memilih untuk pergi.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-5.png"
+        },
+        {
+          "text": "Setelah itu, datanglah seorang Samaria yang sedang melakukan perjalanan.\nKetika melihat laki-laki yang terluka, ia merasa kasihan.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-6.png"
+        },
+        {
+          "text": "Orang Samaria itu berhenti dan mendekatinya.\nIa membersihkan dan membalut luka-lukanya dengan hati-hati.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-7.png"
+        },
+        {
+          "text": "Lalu ia menaikkan laki-laki itu ke atas hewan tunggangannya.\nIa membawanya ke sebuah penginapan agar bisa beristirahat.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-8.png"
+        },
+        {
+          "text": "Di penginapan, orang Samaria itu tetap merawatnya.\nIa memastikan laki-laki yang terluka itu mendapatkan pertolongan.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-9.png"
+        },
+        {
+          "text": "Keesokan harinya, orang Samaria itu memberikan uang kepada pemilik penginapan.\n“Tolong rawat dia sampai sembuh,” katanya.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-10.png"
+        },
+        {
+          "text": "Yesus bertanya, “Siapakah yang menjadi sesama bagi orang yang terluka itu?”\nJawabannya adalah orang yang menunjukkan belas kasih kepadanya.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-11.png"
+        },
+        {
+          "text": "Yesus mengajarkan kita untuk menolong dan mengasihi siapa pun yang membutuhkan.\nKita juga bisa menjadi sesama yang baik bagi orang lain.\nPesan Hari Ini: Tuhan mengajarkan kita untuk mengasihi dan menolong sesama.",
+          "image": "assets/content/orang-samaria-yang-baik-hati-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "lima-roti-dan-dua-ikan",
+      "title": "Lima Roti dan Dua Ikan",
+      "reference": "Yohanes 6:1–14",
+      "summary": "Apa yang kita punya bisa menjadi berkat ketika kita mau berbagi.",
+      "cover": "assets/content/lima-roti-dan-dua-ikan-cover.png",
+      "audio": "assets/content/lima-roti-dan-dua-ikan-narration.mp3",
+      "timingAsset": "assets/content/lima-roti-dan-dua-ikan-timing.json",
+      "pages": [
+        {
+          "text": "Suatu hari, banyak orang datang untuk mendengarkan Yesus.\nMereka mengikuti-Nya sampai ke tempat yang jauh dari kota.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-1.png"
+        },
+        {
+          "text": "Hari mulai sore, tetapi orang-orang masih bersama Yesus.\nMereka mulai lapar dan membutuhkan makanan.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-2.png"
+        },
+        {
+          "text": "Murid-murid berkata kepada Yesus, “Sebaiknya mereka pergi mencari makanan.”\nTetapi Yesus berkata, “Kalian beri mereka makan.”",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-3.png"
+        },
+        {
+          "text": "Murid-murid bingung karena jumlah orang sangat banyak.\nMakanan yang mereka punya tidak akan cukup untuk semuanya.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-4.png"
+        },
+        {
+          "text": "Lalu mereka menemukan seorang anak yang membawa bekal.\nIa memiliki lima roti dan dua ikan.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-5.png"
+        },
+        {
+          "text": "Bekal itu terlihat sangat sedikit dibandingkan dengan banyaknya orang.\nTetapi anak itu mau memberikan apa yang ia punya.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-6.png"
+        },
+        {
+          "text": "Yesus meminta semua orang duduk bersama di atas rumput.\nLalu Yesus mengambil lima roti dan dua ikan itu.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-7.png"
+        },
+        {
+          "text": "Yesus mengucap syukur kepada Tuhan.\nKemudian roti dan ikan itu mulai dibagikan kepada semua orang.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-8.png"
+        },
+        {
+          "text": "Satu demi satu, semua orang menerima makanan.\nMereka makan sampai kenyang.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-9.png"
+        },
+        {
+          "text": "Ajaibnya, makanan itu cukup untuk semua orang.\nTidak ada seorang pun yang pulang dengan perut lapar.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-10.png"
+        },
+        {
+          "text": "Setelah semua selesai makan, murid-murid mengumpulkan makanan yang tersisa.\nMasih ada dua belas keranjang penuh.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-11.png"
+        },
+        {
+          "text": "Anak itu hanya memberikan apa yang ia punya, tetapi Tuhan memakainya untuk memberkati banyak orang.\nKita juga bisa berbagi dengan tulus, meskipun yang kita punya terasa sedikit.\nPesan Hari Ini: Apa yang kita punya bisa menjadi berkat ketika kita mau berbagi.",
+          "image": "assets/content/lima-roti-dan-dua-ikan-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "zakheus-bertemu-yesus",
+      "title": "Zakheus Bertemu Yesus",
+      "reference": "Lukas 19:1–10",
+      "summary": "Kalau kita berbuat salah, kita bisa meminta maaf dan memilih melakukan yang benar.",
+      "cover": "assets/content/zakheus-bertemu-yesus-cover.png",
+      "audio": "assets/content/zakheus-bertemu-yesus-narration.mp3",
+      "timingAsset": "assets/content/zakheus-bertemu-yesus-edit-97db2222-4168-46a5-88b9-30b9a7317e9f-timing.json",
+      "pages": [
+        {
+          "text": "Suatu hari, Yesus datang ke kota Yerikho.\nBanyak orang berkumpul untuk melihat-Nya.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-1.png"
+        },
+        {
+          "text": "Di kota itu tinggal seorang bernama Zakheus.\nIa ingin sekali melihat Yesus.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-2.png"
+        },
+        {
+          "text": "Tetapi Zakheus bertubuh pendek dan tidak bisa melihat melewati kerumunan.\nIa pun berlari mendahului orang-orang.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-3.png"
+        },
+        {
+          "text": "Zakheus memanjat sebuah pohon agar bisa melihat Yesus.\nIa menunggu dengan penuh rasa ingin tahu.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-4.png"
+        },
+        {
+          "text": "Ketika Yesus sampai di bawah pohon itu, Ia berhenti.\nYesus melihat ke atas dan memanggil, “Zakheus!”",
+          "image": "assets/content/zakheus-bertemu-yesus-page-5.png"
+        },
+        {
+          "text": "Yesus berkata, “Turunlah, hari ini Aku akan datang ke rumahmu.”\nZakheus sangat terkejut dan gembira.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-6.png"
+        },
+        {
+          "text": "Zakheus segera turun dari pohon.\nIa menyambut Yesus dengan sukacita.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-7.png"
+        },
+        {
+          "text": "Beberapa orang tidak senang melihat Yesus bersama Zakheus.\nMereka tahu Zakheus pernah melakukan hal-hal yang tidak baik.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-8.png"
+        },
+        {
+          "text": "Zakheus menyadari bahwa ia telah melakukan kesalahan.\nIa ingin berubah dan melakukan yang benar.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-9.png"
+        },
+        {
+          "text": "Zakheus berkata bahwa ia akan memberikan sebagian hartanya kepada orang miskin.\nIa juga akan mengembalikan apa yang pernah ia ambil dengan tidak benar.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-10.png"
+        },
+        {
+          "text": "Yesus senang melihat hati Zakheus yang berubah.\nZakheus memilih untuk memperbaiki kesalahannya dan hidup dengan cara yang lebih baik.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-11.png"
+        },
+        {
+          "text": "Yesus menunjukkan bahwa setiap orang bisa berubah dan memilih melakukan yang benar.\nSaat kita berbuat salah, kita juga bisa mengakuinya dan memperbaikinya.\nPesan Hari Ini: Kalau kita berbuat salah, kita bisa meminta maaf dan memilih melakukan yang benar.",
+          "image": "assets/content/zakheus-bertemu-yesus-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "yesus-menyembuhkan-orang-lumpuh",
+      "title": "Yesus Menyembuhkan Orang Lumpuh",
+      "reference": "Markus 2:1–12",
+      "summary": "Yesus peduli kepada kita, dan sahabat yang baik saling menolong.",
+      "cover": "assets/content/yesus-menyembuhkan-orang-lumpuh-cover.png",
+      "audio": "assets/content/yesus-menyembuhkan-orang-lumpuh-narration.mp3",
+      "timingAsset": "assets/content/yesus-menyembuhkan-orang-lumpuh-timing.json",
+      "pages": [
+        {
+          "text": "Pada suatu hari, Yesus datang ke sebuah rumah.\nBanyak orang datang untuk melihat Yesus.\nRumah itu menjadi sangat penuh.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-1.png"
+        },
+        {
+          "text": "Di kota itu, ada seorang laki-laki yang lumpuh.\nIa tidak bisa berjalan sendiri.\nIa membutuhkan bantuan orang lain.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-2.png"
+        },
+        {
+          "text": "Orang lumpuh itu mempunyai empat sahabat yang baik.\nMereka ingin membawa dia kepada Yesus.\nMereka percaya Yesus bisa menolong.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-3.png"
+        },
+        {
+          "text": "Keempat sahabat itu mengangkat tempat tidur orang lumpuh itu.\nMereka membawanya ke rumah tempat Yesus berada.\nMereka berjalan bersama dengan hati-hati.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-4.png"
+        },
+        {
+          "text": "Saat mereka tiba, rumah itu sangat ramai.\nBanyak orang berdiri di depan pintu.\nMereka tidak bisa masuk.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-5.png"
+        },
+        {
+          "text": "Tetapi sahabat-sahabat itu tidak menyerah.\nMereka mencari jalan lain untuk menolong temannya.\nMereka tetap ingin membawa dia kepada Yesus.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-6.png"
+        },
+        {
+          "text": "Mereka naik ke atap rumah.\nDengan hati-hati, mereka membuat lubang di atap.\nLalu mereka menurunkan temannya di depan Yesus.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-7.png"
+        },
+        {
+          "text": "Yesus melihat orang lumpuh itu dan sahabat-sahabatnya.\nYesus tahu mereka datang dengan penuh percaya.\nYesus sangat peduli kepada mereka.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-8.png"
+        },
+        {
+          "text": "Lalu Yesus berkata kepada orang lumpuh itu.\nYesus berkata dengan lembut dan penuh kasih.\nSemua orang memperhatikan Yesus.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-9.png"
+        },
+        {
+          "text": "Yesus berkata, “Bangunlah, angkat tempat tidurmu, dan pulanglah.”\nOrang itu pun bangun.\nIa mulai berjalan.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-10.png"
+        },
+        {
+          "text": "Semua orang menjadi heran.\nMereka memuji Tuhan atas apa yang mereka lihat.\nMereka bersukacita karena Yesus sudah menolong orang itu.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-11.png"
+        },
+        {
+          "text": "Yesus menunjukkan kasih dan kuasa-Nya.\nSahabat-sahabat yang baik juga menolong temannya datang kepada Yesus.\nPesan Hari Ini: Yesus peduli kepada kita, dan sahabat yang baik saling menolong.",
+          "image": "assets/content/yesus-menyembuhkan-orang-lumpuh-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "petrus-mendapat-banyak-ikan",
+      "title": "Petrus Mendapat Banyak Ikan",
+      "reference": "Lukas 5:1–11",
+      "summary": "Kita bisa percaya dan mengikuti Yesus.",
+      "cover": "assets/content/petrus-mendapat-banyak-ikan-cover.png",
+      "audio": "assets/content/petrus-mendapat-banyak-ikan-narration.mp3",
+      "timingAsset": "assets/content/petrus-mendapat-banyak-ikan-timing.json",
+      "pages": [
+        {
+          "text": "Pada suatu hari, Yesus berdiri di tepi danau.\nBanyak orang datang untuk mendengarkan-Nya.\nMereka ingin mendengar firman Tuhan.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-1.png"
+        },
+        {
+          "text": "Di dekat sana ada beberapa perahu nelayan.\nPetrus dan teman-temannya sedang membersihkan jala.\nMereka terlihat lelah.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-2.png"
+        },
+        {
+          "text": "Semalaman mereka sudah menangkap ikan.\nTetapi mereka tidak mendapatkan apa-apa.\nJala mereka tetap kosong.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-3.png"
+        },
+        {
+          "text": "Yesus naik ke perahu Petrus.\nIa meminta Petrus membawa perahu sedikit menjauh dari pantai.\nDari sana, Yesus mengajar banyak orang.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-4.png"
+        },
+        {
+          "text": "Setelah selesai mengajar, Yesus berbicara kepada Petrus.\nYesus menyuruhnya membawa perahu ke tempat yang lebih dalam.\nLalu Petrus diminta menurunkan jala lagi.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-5.png"
+        },
+        {
+          "text": "Petrus berkata bahwa mereka sudah bekerja semalaman.\nMereka belum menangkap seekor ikan pun.\nTetapi Petrus mau percaya kepada Yesus.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-6.png"
+        },
+        {
+          "text": "Petrus dan teman-temannya menurunkan jala ke dalam air.\nMereka menunggu sambil memegang jala.\nLalu sesuatu yang luar biasa terjadi.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-7.png"
+        },
+        {
+          "text": "Tiba-tiba jala mereka dipenuhi banyak sekali ikan.\nJumlahnya begitu banyak hingga jala hampir robek.\nPetrus sangat terkejut.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-8.png"
+        },
+        {
+          "text": "Mereka memanggil teman-teman dari perahu lain untuk membantu.\nSemua orang bekerja bersama-sama.\nMereka mengangkat ikan ke dalam perahu.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-9.png"
+        },
+        {
+          "text": "Kedua perahu menjadi penuh dengan ikan.\nSemua orang sangat kagum melihat apa yang terjadi.\nPetrus tahu Yesus sungguh luar biasa.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-10.png"
+        },
+        {
+          "text": "Yesus berkata kepada Petrus agar tidak takut.\nYesus mengajak Petrus untuk mengikuti-Nya.\nPetrus pun percaya kepada Yesus.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-11.png"
+        },
+        {
+          "text": "Petrus belajar bahwa ia bisa percaya kepada perkataan Yesus.\nYesus juga mengajak Petrus untuk mengikuti-Nya.\nPesan Hari Ini: Kita bisa percaya dan mengikuti Yesus.",
+          "image": "assets/content/petrus-mendapat-banyak-ikan-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
+      "id": "elia-diberi-makan-burung-gagak",
+      "title": "Elia Diberi Makan Burung Gagak",
+      "reference": "1 Raja-raja 17:1–6",
+      "summary": "Tuhan tahu apa yang kita butuhkan dan selalu memelihara kita.",
+      "cover": "assets/content/elia-diberi-makan-burung-gagak-cover.png",
+      "audio": "assets/content/elia-diberi-makan-burung-gagak-narration.mp3",
+      "timingAsset": "assets/content/elia-diberi-makan-burung-gagak-timing.json",
+      "pages": [
+        {
+          "text": "Pada suatu hari, Tuhan berbicara kepada Elia.\nTuhan menyuruh Elia pergi ke sebuah tempat yang tenang.\nElia pun menaati Tuhan.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-1.png"
+        },
+        {
+          "text": "Elia berjalan meninggalkan kota.\nIa pergi menuju sebuah sungai kecil.\nTempat itu bernama Kerit.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-2.png"
+        },
+        {
+          "text": "Di sana, Elia tinggal dekat aliran sungai.\nIa bisa minum dari air yang mengalir.\nTetapi tidak ada makanan di sekitarnya.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-3.png"
+        },
+        {
+          "text": "Tuhan tahu Elia membutuhkan makanan.\nTuhan sudah menyiapkan cara untuk menjaganya.\nElia percaya kepada Tuhan.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-4.png"
+        },
+        {
+          "text": "Pada pagi hari, terdengar suara kepakan sayap.\nBeberapa burung gagak datang terbang mendekat.\nBurung-burung itu membawa makanan.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-5.png"
+        },
+        {
+          "text": "Burung gagak membawa roti dan daging untuk Elia.\nElia menerima makanan itu dengan sukacita.\nTuhan benar-benar menjaga Elia.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-6.png"
+        },
+        {
+          "text": "Pada sore hari, burung gagak datang lagi.\nMereka kembali membawa makanan untuk Elia.\nElia tidak kekurangan.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-7.png"
+        },
+        {
+          "text": "Setiap hari, Elia minum dari sungai.\nIa juga menerima makanan yang Tuhan kirimkan.\nElia belajar untuk terus percaya.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-8.png"
+        },
+        {
+          "text": "Hari demi hari berlalu.\nElia tetap tinggal di tempat yang Tuhan tunjukkan.\nTuhan terus memeliharanya.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-9.png"
+        },
+        {
+          "text": "Elia melihat burung-burung datang dari kejauhan.\nIa tahu Tuhan tidak melupakannya.\nElia merasa tenang.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-10.png"
+        },
+        {
+          "text": "Elia bersyukur kepada Tuhan.\nIa belajar bahwa Tuhan tahu apa yang dibutuhkannya.\nTuhan selalu peduli.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-11.png"
+        },
+        {
+          "text": "Tuhan menjaga Elia dengan cara yang tidak biasa.\nBahkan burung gagak dipakai Tuhan untuk membawa makanan.\nPesan Hari Ini: Tuhan tahu apa yang kita butuhkan dan selalu memelihara kita.",
+          "image": "assets/content/elia-diberi-makan-burung-gagak-page-12.png"
+        }
+      ],
+      "isFree": true
     }
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "kasih-allah",
+      "title": "KASIH ALLAH",
+      "reference": "1 Yohanes 4:19",
+      "text": "“Kita mengasihi, karena Allah lebih dahulu mengasihi kita.”",
+      "image": "assets/content/kasih-allah-verse.png",
+      "audio": "assets/content/kasih-allah-verse.mp3"
+    }
+  ]
 }
