@@ -12,7 +12,20 @@
           "package_name": "com.gembalakecil.gembala_kecil"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "97464491610-3gh6j155pbm2otefv8rntvsp96phqr35.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gembalakecil.gembala_kecil",
+            "certificate_hash": "d42e5429731c0c43ccabf77f9ff262355eb827cc"
+          }
+        },
+        {
+          "client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "97464491610-ndfo6ko6hu4q5f1co57e26hqts101r33.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gembalakecil.gembalaKecil"
+              }
+            }
+          ]
         }
       }
     }
