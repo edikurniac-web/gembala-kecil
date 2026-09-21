@@ -1,5 +1,6 @@
 import {spawn} from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -18,6 +19,7 @@ const bucket = process.env.GEMBALA_R2_BUCKET || 'gembala-kecil-content';
 const dryRun = process.argv.includes('--dry-run');
 const concurrency = 2;
 const maxAttempts = 4;
+let cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN || null;
 
 function fail(message) {
   throw new Error(message);
@@ -28,6 +30,76 @@ function contentType(filename) {
   if (filename.endsWith('.mp3')) return 'audio/mpeg';
   if (filename.endsWith('.json')) return 'application/json; charset=utf-8';
   return 'application/octet-stream';
+}
+
+function wranglerConfigPaths() {
+  const paths = [];
+  if (process.env.XDG_CONFIG_HOME) {
+    paths.push(
+      path.join(process.env.XDG_CONFIG_HOME, '.wrangler', 'config', 'default.toml'),
+    );
+  }
+  if (process.env.APPDATA) {
+    paths.push(
+      path.join(
+        process.env.APPDATA,
+        'xdg.config',
+        '.wrangler',
+        'config',
+        'default.toml',
+      ),
+    );
+  }
+  paths.push(
+    path.join(os.homedir(), '.config', '.wrangler', 'config', 'default.toml'),
+  );
+  return [...new Set(paths)];
+}
+
+function readWranglerOAuthToken() {
+  for (const configPath of wranglerConfigPaths()) {
+    if (!fs.existsSync(configPath)) continue;
+    const config = fs.readFileSync(configPath, 'utf8');
+    const match = /^oauth_token\s*=\s*"([^"]+)"/m.exec(config);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function refreshWranglerLogin() {
+  if (cloudflareApiToken || dryRun) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [wranglerPath, 'whoami'], {
+      cwd: workerDirectory,
+      env: {...process.env, WRANGLER_WRITE_LOGS: 'false'},
+      stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
+    });
+    let output = '';
+    child.stdout.on('data', (chunk) => (output += chunk));
+    child.stderr.on('data', (chunk) => (output += chunk));
+    child.on('error', reject);
+    child.on('close', (code) => {
+      if (code !== 0) {
+        reject(
+          new Error(
+            'Login Cloudflare perlu diperbarui. Jalankan `npx wrangler login` lalu coba publish lagi.',
+          ),
+        );
+        return;
+      }
+      cloudflareApiToken = readWranglerOAuthToken();
+      if (!cloudflareApiToken) {
+        reject(
+          new Error(
+            'Token OAuth Wrangler tidak ditemukan setelah login diperiksa.',
+          ),
+        );
+        return;
+      }
+      resolve();
+    });
+  });
 }
 
 function collectAssets(catalog) {
@@ -81,6 +153,11 @@ function uploadOnce(key, source, cacheControl) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, {
       cwd: workerDirectory,
+      env: {
+        ...process.env,
+        CLOUDFLARE_API_TOKEN: cloudflareApiToken,
+        WRANGLER_WRITE_LOGS: 'false',
+      },
       stdio: ['ignore', 'pipe', 'pipe'],
       windowsHide: true,
     });
@@ -128,6 +205,7 @@ const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 if (catalog.schemaVersion !== 1) fail('Unsupported catalog schema.');
 const assets = collectAssets(catalog);
 console.log(`${dryRun ? 'Checking' : 'Publishing'} ${assets.length} content assets...`);
+await refreshWranglerLogin();
 await runPool(assets, (key) =>
   upload(key, path.join(contentDirectory, key), 'public, max-age=31536000, immutable'),
 );
