@@ -47,6 +47,7 @@ firebase-debug.log
 .firebase/
 .wrangler/
 .dev.vars
+.r2-publish-state.json
 node_modules/
 
 # Symbolication related

@@ -1,4 +1,5 @@
 import {spawn} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -15,10 +16,17 @@ const wranglerPath = path.join(
   'wrangler.js',
 );
 const catalogPath = path.join(contentDirectory, 'catalog.json');
+const publishStatePath = path.join(root, '.r2-publish-state.json');
 const bucket = process.env.GEMBALA_R2_BUCKET || 'gembala-kecil-content';
+const contentApi =
+  process.env.GEMBALA_CONTENT_API ||
+  'https://api-gembalakecil.duniapinta.my.id';
 const dryRun = process.argv.includes('--dry-run');
-const concurrency = 2;
-const maxAttempts = 4;
+const forceAll = process.argv.includes('--force-all');
+const bootstrapFromCloud = process.argv.includes('--bootstrap-from-cloud');
+const concurrency = 1;
+const maxAttempts = 6;
+const uploadSpacingMs = 650;
 let cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN || null;
 
 function fail(message) {
@@ -30,6 +38,30 @@ function contentType(filename) {
   if (filename.endsWith('.mp3')) return 'audio/mpeg';
   if (filename.endsWith('.json')) return 'application/json; charset=utf-8';
   return 'application/octet-stream';
+}
+
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function fileHash(filename) {
+  return createHash('sha256').update(fs.readFileSync(filename)).digest('hex');
+}
+
+function readPublishState() {
+  if (!fs.existsSync(publishStatePath)) return {};
+  try {
+    const value = JSON.parse(fs.readFileSync(publishStatePath, 'utf8'));
+    return value && typeof value === 'object' ? value : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePublishState(state) {
+  const temporaryPath = `${publishStatePath}.tmp`;
+  fs.writeFileSync(temporaryPath, `${JSON.stringify(state, null, 2)}\n`);
+  fs.renameSync(temporaryPath, publishStatePath);
 }
 
 function wranglerConfigPaths() {
@@ -183,9 +215,18 @@ async function upload(key, source, cacheControl) {
       return;
     } catch (error) {
       if (attempt === maxAttempts) throw error;
-      const delay = attempt * 1500;
-      console.warn(`Retrying ${key} (${attempt}/${maxAttempts})...`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      const message = String(error);
+      const rateLimited =
+        message.includes('429') ||
+        message.includes('Too Many Requests') ||
+        message.includes('Rate limited');
+      const delay = rateLimited
+        ? Math.min(60000, 5000 * 2 ** (attempt - 1))
+        : attempt * 2000;
+      console.warn(
+        `Retrying ${key} (${attempt}/${maxAttempts}) in ${Math.ceil(delay / 1000)}s...`,
+      );
+      await sleep(delay);
     }
   }
 }
@@ -204,10 +245,40 @@ async function runPool(items, task) {
 const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 if (catalog.schemaVersion !== 1) fail('Unsupported catalog schema.');
 const assets = collectAssets(catalog);
-console.log(`${dryRun ? 'Checking' : 'Publishing'} ${assets.length} content assets...`);
-await refreshWranglerLogin();
-await runPool(assets, (key) =>
-  upload(key, path.join(contentDirectory, key), 'public, max-age=31536000, immutable'),
+const publishState = readPublishState();
+if (bootstrapFromCloud && !dryRun) {
+  const response = await fetch(`${contentApi}/v1/catalog`);
+  if (!response.ok) {
+    fail(`Cannot read published catalog (${response.status}).`);
+  }
+  const publishedCatalog = await response.json();
+  for (const key of collectAssets(publishedCatalog)) {
+    const source = path.join(contentDirectory, key);
+    if (fs.existsSync(source)) publishState[key] = fileHash(source);
+  }
+  writePublishState(publishState);
+  console.log('Resumed from the currently published Cloudflare catalog.');
+}
+const pendingAssets =
+  dryRun || forceAll
+    ? assets
+    : assets.filter(
+        (key) =>
+          publishState[key] !== fileHash(path.join(contentDirectory, key)),
+      );
+console.log(
+  `${dryRun ? 'Checking' : 'Publishing'} ${pendingAssets.length} changed assets ` +
+    `(${assets.length} referenced)...`,
 );
+await refreshWranglerLogin();
+await runPool(pendingAssets, async (key) => {
+  const source = path.join(contentDirectory, key);
+  await upload(key, source, 'public, max-age=31536000, immutable');
+  if (!dryRun) {
+    publishState[key] = fileHash(source);
+    writePublishState(publishState);
+    await sleep(uploadSpacingMs);
+  }
+});
 await upload('catalog.json', catalogPath, 'public, max-age=60');
 console.log(`Published catalog with ${catalog.stories.length} stories and ${catalog.verses.length} verses.`);
