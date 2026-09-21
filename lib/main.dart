@@ -827,6 +827,59 @@ class StoryListScreen extends StatefulWidget {
   State<StoryListScreen> createState() => _StoryListScreenState();
 }
 
+class _PremiumOffer extends StatelessWidget {
+  const _PremiumOffer({required this.requiresAccount});
+
+  final bool requiresAccount;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            requiresAccount
+                ? 'Masuk dengan akun orang tua untuk membeli dan memulihkan akses di perangkat lain.'
+                : 'Buka semua cerita premium, termasuk cerita baru yang akan ditambahkan setiap minggu.',
+          ),
+          const SizedBox(height: 18),
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'Rp99.000',
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Color(0xFF8A929A),
+                  decoration: TextDecoration.lineThrough,
+                  decorationThickness: 2,
+                ),
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Rp49.000',
+                style: TextStyle(
+                  fontSize: 27,
+                  height: 1,
+                  fontWeight: FontWeight.w700,
+                  color: teal,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 7),
+          const Text(
+            'Sekali bayar • akses selamanya',
+            style: TextStyle(
+              fontSize: 13,
+              color: Color(0xFF687889),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      );
+}
+
 class _StoryListScreenState extends State<StoryListScreen> {
   Future<void> openStory(StoryBook story) async {
     if (!story.isFree) {
@@ -835,10 +888,8 @@ class _StoryListScreenState extends State<StoryListScreen> {
         final openLogin = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            title: const Text('Masuk sebelum membeli'),
-            content: const Text(
-              'Cerita gratis tetap bisa dibaca tanpa akun. Akun orang tua diperlukan untuk pembelian premium dan pemulihan akses.',
-            ),
+            title: const Text('Buka Semua Cerita'),
+            content: const _PremiumOffer(requiresAccount: true),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
@@ -846,7 +897,7 @@ class _StoryListScreenState extends State<StoryListScreen> {
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text('Buat Akun / Masuk'),
+                child: const Text('Masuk untuk Membeli'),
               ),
             ],
           ),
@@ -883,13 +934,14 @@ class _StoryListScreenState extends State<StoryListScreen> {
       await showDialog<void>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-                title: const Text('Cerita premium'),
-                content: const Text(
-                    'Akun orang tua sudah terhubung. Pembelian premium akan tersedia setelah produk App Store dan Google Play disiapkan.'),
+                title: const Text('Buka Semua Cerita'),
+                content: const _PremiumOffer(requiresAccount: false),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(dialogContext),
-                      child: const Text('Mengerti'))
+                      child: const Text('Nanti')),
+                  FilledButton(
+                      onPressed: null, child: const Text('Beli Rp49.000'))
                 ],
               ));
       return;
