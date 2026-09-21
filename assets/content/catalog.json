@@ -542,6 +542,66 @@
       "isFree": true
     },
     {
+      "id": "yesus-berjalan-di-atas-air",
+      "title": "Yesus Berjalan di Atas Air",
+      "reference": "Matius 14:22–33",
+      "summary": "Ketika kita merasa takut, kita dapat tetap percaya kepada Yesus.",
+      "cover": "assets/content/yesus-berjalan-di-atas-air-cover.png",
+      "audio": "assets/content/yesus-berjalan-di-atas-air-narration.mp3",
+      "timingAsset": "assets/content/yesus-berjalan-di-atas-air-timing.json",
+      "pages": [
+        {
+          "text": "Suatu sore, Yesus meminta murid-murid-Nya naik ke perahu. Mereka berlayar lebih dulu ke seberang danau.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-1.png"
+        },
+        {
+          "text": "Yesus tinggal sendirian untuk berdoa. Hari mulai gelap, dan angin bertiup semakin kencang.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-2.png"
+        },
+        {
+          "text": "Di tengah danau, perahu murid-murid mulai terombang-ambing. Ombak besar menghantam perahu mereka.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-3.png"
+        },
+        {
+          "text": "Murid-murid merasa takut. Mereka berusaha mengendalikan perahu di tengah angin yang kuat.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-4.png"
+        },
+        {
+          "text": "Tiba-tiba, mereka melihat seseorang berjalan di atas air. “Lihat! Ada seseorang di sana!” seru mereka.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-5.png"
+        },
+        {
+          "text": "Mereka semakin takut karena tidak tahu siapa yang datang. Namun kemudian mereka mendengar suara yang mereka kenal.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-6.png"
+        },
+        {
+          "text": "“Tenanglah. Ini Aku,” kata Yesus. “Jangan takut.”",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-7.png"
+        },
+        {
+          "text": "Petrus berkata, “Tuhan, kalau itu benar Engkau, suruhlah aku datang kepada-Mu.” Yesus menjawab, “Datanglah.”",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-8.png"
+        },
+        {
+          "text": "Petrus turun dari perahu dan mulai berjalan di atas air. Selama ia melihat kepada Yesus, ia terus melangkah.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-9.png"
+        },
+        {
+          "text": "Tetapi Petrus melihat angin dan ombak yang besar. Ia menjadi takut dan mulai tenggelam.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-10.png"
+        },
+        {
+          "text": "“Tuhan, tolong aku!” teriak Petrus. Yesus segera mengulurkan tangan dan memegangnya.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-11.png"
+        },
+        {
+          "text": "Saat Yesus dan Petrus naik ke perahu, angin pun berhenti. Pesan hari ini, ya: Ketika kita merasa takut, kita dapat selalu percaya bahwa Yesus ada untuk menolong kita.",
+          "image": "assets/content/yesus-berjalan-di-atas-air-page-12.png"
+        }
+      ],
+      "isFree": true
+    },
+    {
       "id": "petrus-mendapat-banyak-ikan",
       "title": "Petrus Mendapat Banyak Ikan",
       "reference": "Lukas 5:1–11",
@@ -599,7 +659,7 @@
           "image": "assets/content/petrus-mendapat-banyak-ikan-page-12.png"
         }
       ],
-      "isFree": true
+      "isFree": false
     },
     {
       "id": "elia-diberi-makan-burung-gagak",
@@ -659,7 +719,7 @@
           "image": "assets/content/elia-diberi-makan-burung-gagak-page-12.png"
         }
       ],
-      "isFree": true
+      "isFree": false
     }
   ],
   "verses": [
@@ -670,6 +730,14 @@
       "text": "“Kita mengasihi, karena Allah lebih dahulu mengasihi kita.”",
       "image": "assets/content/kasih-allah-verse.png",
       "audio": "assets/content/kasih-allah-verse.mp3"
+    },
+    {
+      "id": "kasih-tuhan",
+      "title": "KASIH TUHAN",
+      "reference": "Mazmur 103:8",
+      "text": "“TUHAN adalah penyayang dan pengasih.”",
+      "image": "assets/content/kasih-tuhan-verse.png",
+      "audio": "assets/content/kasih-tuhan-verse.mp3"
     }
   ]
 }

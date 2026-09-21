@@ -15,6 +15,7 @@ dependencies:
   firebase_core: ^4.15.0
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
+  google_sign_in: ^7.2.0
   http: ^1.6.0
 
 dev_dependencies:
@@ -34,5 +35,21 @@ flutter:
   assets:
     - assets/brand/
     - assets/brand/icons/
-    - assets/story/
-    - assets/content/
+    - assets/content/catalog.json
+    - assets/content/daud-dan-goliat-cover.png
+    - assets/content/daud-dan-goliat-narration.mp3
+    - assets/content/daud-dan-goliat-timing.json
+    - assets/content/daud-dan-goliat-page-1.png
+    - assets/content/daud-dan-goliat-page-2.png
+    - assets/content/daud-dan-goliat-page-3.png
+    - assets/content/daud-dan-goliat-page-4.png
+    - assets/content/daud-dan-goliat-page-5.png
+    - assets/content/daud-dan-goliat-page-6.png
+    - assets/content/daud-dan-goliat-page-7.png
+    - assets/content/daud-dan-goliat-edit-a74498f4-cc08-4236-8fd4-ef51ffeea4ad-page-8.png
+    - assets/content/daud-dan-goliat-edit-a74498f4-cc08-4236-8fd4-ef51ffeea4ad-page-9.png
+    - assets/content/daud-dan-goliat-page-10.png
+    - assets/content/daud-dan-goliat-page-11.png
+    - assets/content/daud-dan-goliat-page-12.png
+    - assets/content/kasih-allah-verse.png
+    - assets/content/kasih-allah-verse.mp3

@@ -26,24 +26,25 @@ ContentCatalog appCatalog = const ContentCatalog([StoryBook.builtIn], []);
 bool _isRemotePath(String path) =>
     path.startsWith('https://') || path.startsWith('http://');
 
-String? _localFallbackFor(String path) {
-  final uri = Uri.tryParse(path);
-  if (uri == null || !uri.path.startsWith('/v1/assets/')) return null;
-  final key = Uri.decodeComponent(uri.path.substring('/v1/assets/'.length));
-  return 'assets/content/$key';
-}
-
 Widget contentImage(String path, {BoxFit fit = BoxFit.contain}) {
-  if (!_isRemotePath(path)) return Image.asset(path, fit: fit);
+  if (!_isRemotePath(path)) {
+    return Image.asset(
+      path,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) => const ColoredBox(
+        color: Color(0xFFF4EEE3),
+        child:
+            Center(child: Icon(Icons.image_not_supported_outlined, color: ink)),
+      ),
+    );
+  }
   return Image.network(
     path,
     fit: fit,
-    errorBuilder: (context, error, stackTrace) {
-      final fallback = _localFallbackFor(path);
-      return fallback == null
-          ? const ColoredBox(color: Color(0xFFF4EEE3))
-          : Image.asset(fallback, fit: fit);
-    },
+    errorBuilder: (context, error, stackTrace) => const ColoredBox(
+      color: Color(0xFFF4EEE3),
+      child: Center(child: Icon(Icons.cloud_off_outlined, color: ink)),
+    ),
   );
 }
 
@@ -421,6 +422,25 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
     }
   }
 
+  Future<void> submitGoogle() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      busy = true;
+      error = null;
+    });
+    try {
+      await ParentAccountService.instance.signInWithGoogle(
+        childName: widget.childName,
+        prefs: widget.prefs,
+      );
+      if (mounted) Navigator.pop(context, true);
+    } catch (exception) {
+      if (mounted) setState(() => error = messageFor(exception));
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text('Akun Orang Tua')),
@@ -512,6 +532,32 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                   onPressed: busy ? null : resetPassword,
                   child: const Text('Lupa password?'),
                 ),
+              const SizedBox(height: 12),
+              const Row(children: [
+                Expanded(child: Divider()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Text('atau'),
+                ),
+                Expanded(child: Divider()),
+              ]),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 52,
+                child: OutlinedButton.icon(
+                  key: const Key('parent-google-sign-in'),
+                  onPressed: busy ? null : submitGoogle,
+                  icon: const Text(
+                    'G',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF4285F4),
+                    ),
+                  ),
+                  label: const Text('Lanjutkan dengan Google'),
+                ),
+              ),
               if (createMode) ...[
                 const SizedBox(height: 10),
                 const Text(

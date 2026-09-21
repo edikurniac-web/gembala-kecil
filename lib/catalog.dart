@@ -99,8 +99,23 @@ class ContentCatalog {
   final List<StoryBook> stories;
   final List<VerseItem> verses;
   static Future<ContentCatalog> load() async {
-    Map<String, dynamic> data;
-    var remote = false;
+    final bundledData = jsonDecode(
+      await rootBundle.loadString('assets/content/catalog.json'),
+    ) as Map<String, dynamic>;
+    if (bundledData['schemaVersion'] != 1) {
+      throw const FormatException('Unsupported bundled content catalog');
+    }
+    final bundledStories =
+        (bundledData['stories'] as List).cast<Map<String, dynamic>>();
+    final bundledVerses =
+        (bundledData['verses'] as List).cast<Map<String, dynamic>>();
+    final daud = StoryBook.fromMap(
+      bundledStories.firstWhere((story) => story['id'] == 'daud-dan-goliat'),
+    );
+    final bundledVerse = VerseItem.fromMap(bundledVerses.first);
+
+    List<StoryBook> remoteStories = const [];
+    List<VerseItem> remoteVerses = const [];
     try {
       final response = await http
           .get(Uri.parse('$contentApiBase/v1/catalog'))
@@ -108,30 +123,57 @@ class ContentCatalog {
       if (response.statusCode != 200 && response.statusCode != 206) {
         throw StateError('Cloud catalog returned ${response.statusCode}.');
       }
-      data = jsonDecode(response.body) as Map<String, dynamic>;
-      remote = true;
-    } catch (_) {
-      data = jsonDecode(
-        await rootBundle.loadString('assets/content/catalog.json'),
-      ) as Map<String, dynamic>;
-    }
-    if (data['schemaVersion'] != 1) {
-      throw const FormatException('Unsupported content catalog');
-    }
-    return ContentCatalog(
-      [
-        StoryBook.builtIn,
-        ...(data['stories'] as List).map((x) => StoryBook.fromMap(
-              x as Map<String, dynamic>,
-              remote: remote,
-            ))
-      ],
-      (data['verses'] as List)
-          .map((x) => VerseItem.fromMap(
-                x as Map<String, dynamic>,
-                remote: remote,
+      final remoteData = jsonDecode(response.body) as Map<String, dynamic>;
+      if (remoteData['schemaVersion'] != 1) {
+        throw const FormatException('Unsupported cloud content catalog');
+      }
+      remoteStories = (remoteData['stories'] as List)
+          .map((value) => StoryBook.fromMap(
+                value as Map<String, dynamic>,
+                remote: true,
               ))
-          .toList(growable: false),
+          .toList(growable: false);
+      remoteVerses = (remoteData['verses'] as List)
+          .map((value) => VerseItem.fromMap(
+                value as Map<String, dynamic>,
+                remote: true,
+              ))
+          .toList(growable: false);
+    } catch (_) {
+      // Daud and the first memory verse deliberately remain available offline.
+    }
+
+    final byId = <String, StoryBook>{
+      for (final story in remoteStories) story.id: story,
+      daud.id: daud,
+    };
+    const releaseOrder = [
+      'daud-dan-goliat',
+      'tuhan-menciptakan-dunia',
+      'bahtera-nuh-yang-besar',
+      'yunus-dan-ikan-besar',
+      'daniel-di-kandang-singa',
+      'orang-samaria-yang-baik-hati',
+      'lima-roti-dan-dua-ikan',
+      'zakheus-bertemu-yesus',
+      'yesus-menyembuhkan-orang-lumpuh',
+      'yesus-berjalan-di-atas-air',
+      'petrus-mendapat-banyak-ikan',
+      'elia-diberi-makan-burung-gagak',
+    ];
+    final orderedStories = [
+      for (final id in releaseOrder)
+        if (byId[id] != null) byId[id]!,
+      for (final story in remoteStories)
+        if (!releaseOrder.contains(story.id)) story,
+    ];
+    final versesById = <String, VerseItem>{
+      for (final verse in remoteVerses) verse.id: verse,
+      bundledVerse.id: bundledVerse,
+    };
+    return ContentCatalog(
+      orderedStories,
+      versesById.values.toList(growable: false),
     );
   }
 }

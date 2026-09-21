@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChildProfile {
@@ -44,6 +46,7 @@ class ParentAccountService {
   FirebaseFirestore get firestore => FirebaseFirestore.instance;
   User? get currentUser => auth.currentUser;
   Stream<User?> get authChanges => auth.authStateChanges();
+  Future<void>? _googleInitialization;
 
   Future<UserCredential> createAccount({
     required String email,
@@ -75,10 +78,38 @@ class ParentAccountService {
     return credential;
   }
 
+  Future<UserCredential> signInWithGoogle({
+    required String childName,
+    required SharedPreferences prefs,
+  }) async {
+    late final UserCredential credential;
+    if (kIsWeb) {
+      final provider = GoogleAuthProvider()
+        ..setCustomParameters({'prompt': 'select_account'});
+      credential = await auth.signInWithPopup(provider);
+    } else {
+      _googleInitialization ??= GoogleSignIn.instance.initialize();
+      await _googleInitialization;
+      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleAuth = googleUser.authentication;
+      final googleCredential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      credential = await auth.signInWithCredential(googleCredential);
+    }
+    await ensureParentAndSync(childName: childName, prefs: prefs);
+    return credential;
+  }
+
   Future<void> sendPasswordReset(String email) =>
       auth.sendPasswordResetEmail(email: email.trim());
 
-  Future<void> signOut() => auth.signOut();
+  Future<void> signOut() async {
+    await auth.signOut();
+    if (!kIsWeb && _googleInitialization != null) {
+      await GoogleSignIn.instance.signOut();
+    }
+  }
 
   Future<void> ensureParentAndSync({
     required String childName,
