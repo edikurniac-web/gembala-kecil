@@ -59,8 +59,12 @@ class ParentAccountService {
       password: password,
     );
     await credential.user?.updateDisplayName('Orang Tua');
-    await credential.user?.sendEmailVerification();
-    await ensureParentAndSync(childName: childName, prefs: prefs);
+    try {
+      await credential.user?.sendEmailVerification();
+    } catch (error) {
+      debugPrint('Verification email could not be sent yet: $error');
+    }
+    await _syncAfterAuthentication(childName: childName, prefs: prefs);
     return credential;
   }
 
@@ -74,7 +78,7 @@ class ParentAccountService {
       email: email.trim(),
       password: password,
     );
-    await ensureParentAndSync(childName: childName, prefs: prefs);
+    await _syncAfterAuthentication(childName: childName, prefs: prefs);
     return credential;
   }
 
@@ -97,8 +101,21 @@ class ParentAccountService {
       );
       credential = await auth.signInWithCredential(googleCredential);
     }
-    await ensureParentAndSync(childName: childName, prefs: prefs);
+    await _syncAfterAuthentication(childName: childName, prefs: prefs);
     return credential;
+  }
+
+  Future<void> _syncAfterAuthentication({
+    required String childName,
+    required SharedPreferences prefs,
+  }) async {
+    try {
+      await ensureParentAndSync(childName: childName, prefs: prefs);
+    } catch (error) {
+      // Authentication has already succeeded. A temporary Firestore/rules
+      // problem must not make the UI claim that sign-in failed.
+      debugPrint('Account authenticated; cloud sync will retry later: $error');
+    }
   }
 
   Future<void> sendPasswordReset(String email) =>

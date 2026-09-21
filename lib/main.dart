@@ -6,14 +6,15 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'account_service.dart';
 import 'catalog.dart';
+import 'content_runtime.dart';
 import 'firebase_options.dart';
 import 'story.dart';
+import 'story_downloads.dart';
 
 const ink = Color(0xFF1E344E);
 const teal = Color(0xFF1D9EA2);
@@ -27,30 +28,25 @@ bool _isRemotePath(String path) =>
     path.startsWith('https://') || path.startsWith('http://');
 
 Widget contentImage(String path, {BoxFit fit = BoxFit.contain}) {
-  if (!_isRemotePath(path)) {
-    return Image.asset(
-      path,
-      fit: fit,
-      errorBuilder: (context, error, stackTrace) => const ColoredBox(
-        color: Color(0xFFF4EEE3),
-        child:
-            Center(child: Icon(Icons.image_not_supported_outlined, color: ink)),
+  final resolved = StoryDownloads.instance.cachedPath(path) ?? path;
+  return runtimeContentImage(
+    resolved,
+    fit,
+    () => ColoredBox(
+      color: const Color(0xFFF4EEE3),
+      child: Center(
+        child: Icon(
+          _isRemotePath(path)
+              ? Icons.cloud_off_outlined
+              : Icons.image_not_supported_outlined,
+          color: ink,
+        ),
       ),
-    );
-  }
-  return Image.network(
-    path,
-    fit: fit,
-    errorBuilder: (context, error, stackTrace) => const ColoredBox(
-      color: Color(0xFFF4EEE3),
-      child: Center(child: Icon(Icons.cloud_off_outlined, color: ink)),
     ),
   );
 }
 
-Source contentAudioSource(String path) => _isRemotePath(path)
-    ? UrlSource(path)
-    : AssetSource(path.replaceFirst('assets/', ''));
+Source contentAudioSource(String path) => runtimeAudioSource(path);
 
 String localReadKey(String storyId, SharedPreferences prefs) {
   if (ParentAccountService.instance.currentUser == null) return 'read_$storyId';
@@ -76,7 +72,15 @@ void main() async {
     }
   }
   appCatalog = await ContentCatalog.load();
+  await StoryDownloads.instance.initialize();
   runApp(GembalaApp(prefs: prefs));
+}
+
+StoryBook featuredStoryForToday() {
+  final freeStories =
+      appCatalog.stories.where((story) => story.isFree).toList(growable: false);
+  return storyOfTheDay(
+      freeStories.isEmpty ? appCatalog.stories : freeStories, DateTime.now());
 }
 
 class GembalaApp extends StatefulWidget {
@@ -131,24 +135,33 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (_) =>
-                  widget.prefs.getBool('onboarding_complete') != true ||
-                          widget.name == null
-                      ? NameScreen(
-                          onNameSaved: widget.onNameSaved,
-                          prefs: widget.prefs,
-                          initialName: widget.name)
-                      : HomeScreen(
-                          name: widget.name!,
-                          prefs: widget.prefs,
-                          onNameChanged: widget.onNameSaved,
-                        )));
-    });
+    continueAfterWarmup();
+  }
+
+  Future<void> continueAfterWarmup() async {
+    await Future.wait([
+      Future<void>.delayed(const Duration(milliseconds: 1000)),
+      StoryDownloads.instance
+          .cacheCover(featuredStoryForToday())
+          .timeout(const Duration(seconds: 7), onTimeout: () {}),
+    ]);
+    unawaited(StoryDownloads.instance.cacheCovers(appCatalog.stories));
+    if (!mounted) return;
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (_) =>
+                widget.prefs.getBool('onboarding_complete') != true ||
+                        widget.name == null
+                    ? NameScreen(
+                        onNameSaved: widget.onNameSaved,
+                        prefs: widget.prefs,
+                        initialName: widget.name)
+                    : HomeScreen(
+                        name: widget.name!,
+                        prefs: widget.prefs,
+                        onNameChanged: widget.onNameSaved,
+                      )));
   }
 
   @override
@@ -197,48 +210,76 @@ class _NameScreenState extends State<NameScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      body: SafeArea(
-          child: Padding(
-              padding: const EdgeInsets.all(28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacer(),
-                  Image.asset('assets/brand/logo.png', height: 90),
-                  const SizedBox(height: 32),
-                  const Text('Siapa nama panggilanmu?',
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              28,
+              28,
+              28,
+              28 + MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: math.max(
+                  0,
+                  MediaQuery.sizeOf(context).height -
+                      MediaQuery.paddingOf(context).vertical -
+                      56,
+                ),
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Spacer(),
+                    Image.asset('assets/brand/logo.png', height: 90),
+                    const SizedBox(height: 32),
+                    const Text(
+                      'Siapa nama panggilanmu?',
                       style: TextStyle(
-                          fontSize: 29,
-                          fontWeight: FontWeight.w700,
-                          color: ink)),
-                  const SizedBox(height: 8),
-                  const Text('Biar Gembala bisa menyapamu setiap hari.',
-                      style: TextStyle(color: Color(0xFF687889))),
-                  const SizedBox(height: 22),
-                  TextField(
-                    key: const Key('child-name-input'),
-                    controller: controller,
-                    autofocus: true,
-                    textCapitalization: TextCapitalization.words,
-                    onSubmitted: (_) => next(),
-                    decoration: InputDecoration(
+                        fontSize: 29,
+                        fontWeight: FontWeight.w700,
+                        color: ink,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Biar Gembala bisa menyapamu setiap hari.',
+                      style: TextStyle(color: Color(0xFF687889)),
+                    ),
+                    const SizedBox(height: 22),
+                    TextField(
+                      key: const Key('child-name-input'),
+                      controller: controller,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.words,
+                      onSubmitted: (_) => next(),
+                      decoration: InputDecoration(
                         hintText: 'Contoh: Dante',
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFE8DDCE))),
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE8DDCE)),
+                        ),
                         enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFE8DDCE)))),
-                  ),
-                  const SizedBox(height: 16),
-                  _PrimaryButton('Lanjutkan', next),
-                  const Spacer(),
-                ],
-              ))));
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE8DDCE)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _PrimaryButton('Lanjutkan', next),
+                    const Spacer(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
 }
 
 class AccountIntroScreen extends StatelessWidget {
@@ -547,15 +588,12 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                 child: OutlinedButton.icon(
                   key: const Key('parent-google-sign-in'),
                   onPressed: busy ? null : submitGoogle,
-                  icon: const Text(
-                    'G',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF4285F4),
-                    ),
+                  icon: SvgPicture.asset('assets/brand/google_g.svg',
+                      width: 20, height: 20),
+                  label: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text('Lanjutkan dengan Google', maxLines: 1),
                   ),
-                  label: const Text('Lanjutkan dengan Google'),
                 ),
               ),
               if (createMode) ...[
@@ -582,9 +620,31 @@ class HomeScreen extends StatelessWidget {
   final String name;
   final SharedPreferences prefs;
   final Future<void> Function(String)? onNameChanged;
+
+  Future<void> openFeatured(
+    BuildContext context,
+    StoryBook story, {
+    required bool readAloud,
+  }) async {
+    final localStory = await ensureStoryDownloaded(context, story);
+    if (localStory == null || !context.mounted) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => readAloud
+            ? ReaderScreen(
+                prefs: prefs,
+                readAloud: true,
+                story: localStory,
+              )
+            : StoryDetailScreen(prefs: prefs, story: localStory),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final featuredStory = storyOfTheDay(appCatalog.stories, DateTime.now());
+    final featuredStory = featuredStoryForToday();
     return Scaffold(
         body: Stack(fit: StackFit.expand, children: [
       Image.asset('assets/brand/home_garden_watercolor.png', fit: BoxFit.cover),
@@ -709,25 +769,18 @@ class HomeScreen extends StatelessWidget {
                                         color: ink)),
                                 const SizedBox(height: 7),
                                 _MiniButton(
-                                    'Baca Cerita  →',
-                                    () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => StoryDetailScreen(
-                                                prefs: prefs,
-                                                story: featuredStory))),
-                                    filled: true),
+                                    'Baca Cerita',
+                                    () => openFeatured(context, featuredStory,
+                                        readAloud: false),
+                                    filled: true,
+                                    icon: Icons.arrow_forward_rounded),
                                 const SizedBox(height: 5),
                                 _MiniButton(
-                                    '🎧  Dibacakan Gembala',
-                                    () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => ReaderScreen(
-                                                prefs: prefs,
-                                                readAloud: true,
-                                                story: featuredStory))),
-                                    filled: false),
+                                    'Dibacakan Gembala',
+                                    () => openFeatured(context, featuredStory,
+                                        readAloud: true),
+                                    filled: false,
+                                    icon: Icons.headphones_rounded),
                               ])),
                     ]),
                   )),
@@ -827,6 +880,95 @@ class StoryListScreen extends StatefulWidget {
   State<StoryListScreen> createState() => _StoryListScreenState();
 }
 
+Future<StoryBook?> ensureStoryDownloaded(
+    BuildContext context, StoryBook story) async {
+  final downloads = StoryDownloads.instance;
+  if (downloads.isDownloaded(story)) return downloads.localStory(story);
+  return showDialog<StoryBook>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => _StoryDownloadDialog(story: story),
+  );
+}
+
+class _StoryDownloadDialog extends StatefulWidget {
+  const _StoryDownloadDialog({required this.story});
+  final StoryBook story;
+
+  @override
+  State<_StoryDownloadDialog> createState() => _StoryDownloadDialogState();
+}
+
+class _StoryDownloadDialogState extends State<_StoryDownloadDialog> {
+  double progress = 0;
+  String? error;
+  bool downloading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => start());
+  }
+
+  Future<void> start() async {
+    if (downloading) return;
+    setState(() {
+      downloading = true;
+      error = null;
+      progress = 0;
+    });
+    try {
+      final story = await StoryDownloads.instance.download(
+        widget.story,
+        (value) {
+          if (mounted) setState(() => progress = value);
+        },
+      );
+      if (mounted) Navigator.pop(context, story);
+    } catch (exception) {
+      if (mounted) {
+        setState(() {
+          downloading = false;
+          error = 'Unduhan belum selesai. Periksa koneksi lalu coba lagi.';
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: !downloading,
+        child: AlertDialog(
+          title: Text('Mengunduh ${widget.story.title}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              LinearProgressIndicator(value: progress == 0 ? null : progress),
+              const SizedBox(height: 12),
+              Text(
+                error ??
+                    'Menyiapkan gambar dan narasi… ${(progress * 100).round()}%',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: error == null
+              ? null
+              : [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Batal'),
+                  ),
+                  FilledButton(
+                    onPressed: start,
+                    child: const Text('Coba Lagi'),
+                  ),
+                ],
+        ),
+      );
+}
+
 class _PremiumOffer extends StatelessWidget {
   const _PremiumOffer({required this.requiresAccount});
 
@@ -881,6 +1023,19 @@ class _PremiumOffer extends StatelessWidget {
 }
 
 class _StoryListScreenState extends State<StoryListScreen> {
+  Future<void> openDownloadedStory(StoryBook story) async {
+    final localStory = await ensureStoryDownloaded(context, story);
+    if (localStory == null || !mounted) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            StoryDetailScreen(prefs: widget.prefs, story: localStory),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
   Future<void> openStory(StoryBook story) async {
     if (!story.isFree) {
       final account = ParentAccountService.instance;
@@ -921,14 +1076,7 @@ class _StoryListScreenState extends State<StoryListScreen> {
       } catch (_) {}
       if (!mounted) return;
       if (entitled) {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                StoryDetailScreen(prefs: widget.prefs, story: story),
-          ),
-        );
-        if (mounted) setState(() {});
+        await openDownloadedStory(story);
         return;
       }
       await showDialog<void>(
@@ -940,18 +1088,13 @@ class _StoryListScreenState extends State<StoryListScreen> {
                   TextButton(
                       onPressed: () => Navigator.pop(dialogContext),
                       child: const Text('Nanti')),
-                  FilledButton(
-                      onPressed: null, child: const Text('Beli Rp49.000'))
+                  const FilledButton(
+                      onPressed: null, child: Text('Beli Rp49.000'))
                 ],
               ));
       return;
     }
-    await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) =>
-                StoryDetailScreen(prefs: widget.prefs, story: story)));
-    if (mounted) setState(() {});
+    await openDownloadedStory(story);
   }
 
   @override
@@ -1019,6 +1162,17 @@ class _StoryListScreenState extends State<StoryListScreen> {
                                           color: coral,
                                           fontWeight: FontWeight.w600)),
                                 ]),
+                              if (!StoryDownloads.instance.isDownloaded(story))
+                                const Row(children: [
+                                  Icon(Icons.download_rounded,
+                                      color: teal, size: 18),
+                                  SizedBox(width: 5),
+                                  Text('Unduh untuk membaca',
+                                      style: TextStyle(
+                                          color: teal,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600)),
+                                ]),
                             ])),
                       ])))),
           const SizedBox(height: 12),
@@ -1073,17 +1227,18 @@ class StoryDetailScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     if (story.audio != null)
                       _PrimaryButton(
-                          '🎧  Dibacakan Gembala',
+                          'Dibacakan Gembala',
                           () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (_) => ReaderScreen(
                                       prefs: prefs,
                                       readAloud: true,
-                                      story: story)))),
+                                      story: story))),
+                          icon: Icons.headphones_rounded),
                     const SizedBox(height: 7),
                     _PrimaryButton(
-                        '▣  Baca Sendiri',
+                        'Baca Sendiri',
                         () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1091,7 +1246,8 @@ class StoryDetailScreen extends StatelessWidget {
                                     prefs: prefs,
                                     readAloud: false,
                                     story: story))),
-                        outline: true),
+                        outline: true,
+                        icon: Icons.menu_book_rounded),
                   ]))));
 }
 
@@ -1306,6 +1462,8 @@ class _ParentScreenState extends State<ParentScreen> {
                         user == null
                             ? 'Belum terhubung • cerita gratis tetap tersedia'
                             : user.email ?? 'Akun orang tua terhubung',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Color(0xFF687889)),
                       ),
                       if (user != null && !user.emailVerified) ...[
@@ -1436,10 +1594,31 @@ class _ParentScreenState extends State<ParentScreen> {
 }
 
 class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton(this.label, this.onPressed, {this.outline = false});
+  const _PrimaryButton(this.label, this.onPressed,
+      {this.outline = false, this.icon});
   final String label;
   final VoidCallback onPressed;
   final bool outline;
+  final IconData? icon;
+
+  Widget get content => FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(label,
+            maxLines: 1,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      );
+
+  Widget get buttonContent => icon == null
+      ? content
+      : Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 19),
+            const SizedBox(width: 8),
+            Flexible(child: content),
+          ],
+        );
+
   @override
   Widget build(BuildContext context) => SizedBox(
       width: double.infinity,
@@ -1452,9 +1631,7 @@ class _PrimaryButton extends StatelessWidget {
                   side: const BorderSide(color: teal),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25))),
-              child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600)))
+              child: buttonContent)
           : FilledButton(
               onPressed: onPressed,
               style: FilledButton.styleFrom(
@@ -1462,36 +1639,42 @@ class _PrimaryButton extends StatelessWidget {
                   foregroundColor: ink,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25))),
-              child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600))));
+              child: buttonContent));
 }
 
 class _MiniButton extends StatelessWidget {
-  const _MiniButton(this.label, this.onPressed, {required this.filled});
+  const _MiniButton(this.label, this.onPressed,
+      {required this.filled, required this.icon});
   final String label;
   final VoidCallback onPressed;
   final bool filled;
+  final IconData icon;
   @override
   Widget build(BuildContext context) => SizedBox(
       height: 29,
       child: filled
-          ? FilledButton(
+          ? FilledButton.icon(
               onPressed: onPressed,
               style: FilledButton.styleFrom(
                   backgroundColor: teal,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.zero),
-              child: Text(label,
-                  maxLines: 1, style: const TextStyle(fontSize: 12)))
-          : OutlinedButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 6)),
+              icon: Icon(icon, size: 15),
+              label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(label,
+                      maxLines: 1, style: const TextStyle(fontSize: 12))))
+          : OutlinedButton.icon(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
                   foregroundColor: ink,
                   side: const BorderSide(color: Color(0xFF8AC8DC)),
-                  padding: EdgeInsets.zero),
-              child: Text(label,
-                  maxLines: 1, style: const TextStyle(fontSize: 10))));
+                  padding: const EdgeInsets.symmetric(horizontal: 6)),
+              icon: Icon(icon, size: 14),
+              label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(label,
+                      maxLines: 1, style: const TextStyle(fontSize: 10)))));
 }
 
 class ReaderScreen extends StatefulWidget {
@@ -1555,9 +1738,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     try {
       if (widget.story.timingAsset == null) return;
       final timingPath = widget.story.timingAsset!;
-      final contents = _isRemotePath(timingPath)
-          ? (await http.get(Uri.parse(timingPath))).body
-          : await rootBundle.loadString(timingPath);
+      final contents = await runtimeLoadText(timingPath);
       final audited = StoryTimeline.fromMap(jsonDecode(contents),
           pages: widget.story.pages);
       if (mounted) setState(() => timeline = audited);
@@ -1768,28 +1949,36 @@ class _ReaderScreenState extends State<ReaderScreen> {
                 IconButton.filledTonal(
                     onPressed: page == 0 ? null : () => goTo(page - 1),
                     icon: const Icon(Icons.arrow_back_rounded)),
-                const Spacer(),
+                const SizedBox(width: 5),
                 if (widget.readAloud) ...[
-                  FilledButton.icon(
-                      onPressed: toggleAudio,
-                      style: FilledButton.styleFrom(
-                          backgroundColor: gold, foregroundColor: ink),
-                      icon: Icon(playing
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded),
-                      label: Text(playing ? 'Jeda' : 'Dengarkan')),
+                  Expanded(
+                    child: FilledButton.icon(
+                        onPressed: toggleAudio,
+                        style: FilledButton.styleFrom(
+                            backgroundColor: gold,
+                            foregroundColor: ink,
+                            padding: const EdgeInsets.symmetric(horizontal: 8)),
+                        icon: Icon(playing
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded),
+                        label: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(playing ? 'Jeda' : 'Dengarkan'))),
+                  ),
                   const SizedBox(width: 5),
                   FilterChip(
                       key: const Key('auto-toggle'),
                       selected: auto,
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onSelected: (value) => setState(() => auto = value),
                       showCheckmark: false,
-                      avatar: const Icon(Icons.auto_mode_rounded, size: 15),
+                      avatar: const Icon(Icons.auto_mode_rounded, size: 14),
                       label: const Text('Otomatis',
-                          style: TextStyle(fontSize: 11))),
+                          style: TextStyle(fontSize: 10))),
                 ] else
-                  const Text('Baca sendiri'),
-                const Spacer(),
+                  const Expanded(child: Center(child: Text('Baca sendiri'))),
+                const SizedBox(width: 5),
                 IconButton.filled(
                     onPressed: () => goTo(page + 1),
                     icon: Icon(page == widget.story.pages.length - 1

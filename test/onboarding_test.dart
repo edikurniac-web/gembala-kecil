@@ -4,6 +4,28 @@ import 'package:gembala_kecil/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  testWidgets('name onboarding stays usable above a small-screen keyboard',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    await tester.pumpWidget(MaterialApp(
+      home: NameScreen(
+        prefs: prefs,
+        onNameSaved: (_) async {},
+      ),
+    ));
+    await tester.pump();
+    expect(find.byKey(const Key('child-name-input')), findsOneWidget);
+    expect(find.text('Lanjutkan'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('home logo uses a cropped, top-left layout on phone width',
       (tester) async {
     tester.view.physicalSize = const Size(368, 698);
