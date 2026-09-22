@@ -6,6 +6,7 @@ import worker from '../src/index.js';
 function environment() {
   const objects = new Map();
   return {
+    objects,
     ADMIN_TOKEN: 'test-secret',
     ALLOWED_ORIGINS: 'http://127.0.0.1:57182',
     CONTENT: {
@@ -87,4 +88,54 @@ test('unsafe object keys are rejected', async () => {
     environment(),
   );
   assert.equal(response.status, 400);
+});
+
+test('privacy and deletion pages are publicly available', async () => {
+  const env = environment();
+  const privacy = await worker.fetch(
+    new Request('https://content.example/privacy'),
+    env,
+  );
+  assert.equal(privacy.status, 200);
+  assert.match(await privacy.text(), /Kebijakan Privasi/);
+
+  const deletion = await worker.fetch(
+    new Request('https://content.example/account-deletion'),
+    env,
+  );
+  assert.equal(deletion.status, 200);
+  assert.match(await deletion.text(), /Kirim permintaan penghapusan/);
+
+  const contact = await worker.fetch(
+    new Request('https://content.example/contact'),
+    env,
+  );
+  assert.equal(contact.status, 200);
+  assert.match(await contact.text(), /Hubungi Gembala Kecil/);
+});
+
+test('account deletion requests are stored privately', async () => {
+  const env = environment();
+  const form = new FormData();
+  form.set('email', 'parent@example.com');
+  form.set('confirm', 'yes');
+  const response = await worker.fetch(
+    new Request('https://content.example/account-deletion', {
+      method: 'POST',
+      body: form,
+    }),
+    env,
+  );
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /Permintaan diterima/);
+  const storedKey = [...env.objects.keys()].find((key) =>
+    key.startsWith('private/deletion-requests/'),
+  );
+  assert.ok(storedKey);
+
+  const leaked = await worker.fetch(
+    new Request(`https://content.example/v1/assets/${storedKey}`),
+    env,
+  );
+  assert.equal(leaked.status, 400);
 });

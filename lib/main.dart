@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'account_service.dart';
 import 'catalog.dart';
@@ -24,7 +25,20 @@ const lavender = Color(0xFFF0E9FF);
 const gold = Color(0xFFFFCF48);
 const homeCardColor = Color(0xD9EAF6FF);
 const homeCardShadow = Color(0x1F1E344E);
+final privacyPolicyUri =
+    Uri.parse('https://api-gembalakecil.duniapinta.my.id/privacy');
+final accountDeletionUri =
+    Uri.parse('https://api-gembalakecil.duniapinta.my.id/account-deletion');
 ContentCatalog appCatalog = const ContentCatalog([StoryBook.builtIn], []);
+
+Future<void> openExternalPage(BuildContext context, Uri uri) async {
+  final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+  if (!opened && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Tautan belum dapat dibuka.')),
+    );
+  }
+}
 
 bool _isRemotePath(String path) =>
     path.startsWith('https://') || path.startsWith('http://');
@@ -606,6 +620,10 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                   style: TextStyle(fontSize: 13, color: Color(0xFF687889)),
                 ),
               ],
+              TextButton(
+                onPressed: () => openExternalPage(context, privacyPolicyUri),
+                child: const Text('Kebijakan Privasi'),
+              ),
             ],
           ),
         ),
@@ -1652,6 +1670,27 @@ class _ParentScreenState extends State<ParentScreen> {
                   subtitle: Text(user == null
                       ? 'Data tersimpan lokal di perangkat ini'
                       : 'Profil dan progress tersimpan di cloud'),
+                ),
+                const Divider(height: 28),
+                const Text('Privasi & bantuan',
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w700, color: ink)),
+                ListTile(
+                  onTap: () => openExternalPage(context, privacyPolicyUri),
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: const Text('Kebijakan Privasi'),
+                  trailing: const Icon(Icons.open_in_new_rounded, size: 19),
+                ),
+                ListTile(
+                  onTap: () => openExternalPage(context, accountDeletionUri),
+                  leading: const Icon(Icons.delete_outline_rounded,
+                      color: Color(0xFFB64A3C)),
+                  title: Text(user == null
+                      ? 'Informasi penghapusan akun'
+                      : 'Minta penghapusan akun'),
+                  subtitle: const Text(
+                      'Formulir dapat dibuka tanpa harus masuk ke aplikasi'),
+                  trailing: const Icon(Icons.open_in_new_rounded, size: 19),
                 ),
                 const SizedBox(height: 12),
                 if (user == null)

@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/releases/
 
 # Local source archive and recoverable backoffice replacements.
 # Runtime-ready copies remain tracked under assets/.
