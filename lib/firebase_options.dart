@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54',
-    appId: '1:97464491610:android:7a29c3661c579ac6dd4263',
+    appId: '1:97464491610:android:eb8d9ad581536c27dd4263',
     messagingSenderId: '97464491610',
     projectId: 'gembala-kecil',
     storageBucket: 'gembala-kecil.firebasestorage.app',

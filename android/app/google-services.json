@@ -8,46 +8,34 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:97464491610:android:7a29c3661c579ac6dd4263",
-        "android_client_info": {
-          "package_name": "com.gembalakecil.gembala_kecil"
-        }
+        "android_client_info": {"package_name": "com.gembalakecil.gembala_kecil"}
       },
       "oauth_client": [
-        {
-          "client_id": "97464491610-3gh6j155pbm2otefv8rntvsp96phqr35.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.gembalakecil.gembala_kecil",
-            "certificate_hash": "d42e5429731c0c43ccabf77f9ff262355eb827cc"
-          }
-        },
-        {
-          "client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com",
-          "client_type": 3
-        }
+        {"client_id": "97464491610-3gh6j155pbm2otefv8rntvsp96phqr35.apps.googleusercontent.com", "client_type": 1, "android_info": {"package_name": "com.gembalakecil.gembala_kecil", "certificate_hash": "d42e5429731c0c43ccabf77f9ff262355eb827cc"}},
+        {"client_id": "97464491610-9vsfg040ccc4rh90qgsaimlr3j4crtr1.apps.googleusercontent.com", "client_type": 1, "android_info": {"package_name": "com.gembalakecil.gembala_kecil", "certificate_hash": "01f60af46310f27126fb871a9566680027e5399b"}},
+        {"client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com", "client_type": 3}
       ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54"
-        }
+      "api_key": [{"current_key": "AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54"}],
+      "services": {"appinvite_service": {"other_platform_oauth_client": [
+        {"client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com", "client_type": 3},
+        {"client_id": "97464491610-ndfo6ko6hu4q5f1co57e26hqts101r33.apps.googleusercontent.com", "client_type": 2, "ios_info": {"bundle_id": "com.gembalakecil.gembalaKecil"}}
+      ]}}
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97464491610:android:eb8d9ad581536c27dd4263",
+        "android_client_info": {"package_name": "id.my.duniapinta.gembalakecil"}
+      },
+      "oauth_client": [
+        {"client_id": "97464491610-a3d4fvvvd5loq4fh7rdb9s47icdo0fmd.apps.googleusercontent.com", "client_type": 1, "android_info": {"package_name": "id.my.duniapinta.gembalakecil", "certificate_hash": "d42e5429731c0c43ccabf77f9ff262355eb827cc"}},
+        {"client_id": "97464491610-uhcdtsti1gto2remqhjnu6mv6lagpthi.apps.googleusercontent.com", "client_type": 1, "android_info": {"package_name": "id.my.duniapinta.gembalakecil", "certificate_hash": "01f60af46310f27126fb871a9566680027e5399b"}},
+        {"client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com", "client_type": 3}
       ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "97464491610-ndfo6ko6hu4q5f1co57e26hqts101r33.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.gembalakecil.gembalaKecil"
-              }
-            }
-          ]
-        }
-      }
+      "api_key": [{"current_key": "AIzaSyATEJGEh-CCtdzCSGk35FOYzZwWDvgOp54"}],
+      "services": {"appinvite_service": {"other_platform_oauth_client": [
+        {"client_id": "97464491610-kg9orjvfjucjnlqgq66bratnn5vb8032.apps.googleusercontent.com", "client_type": 3},
+        {"client_id": "97464491610-ndfo6ko6hu4q5f1co57e26hqts101r33.apps.googleusercontent.com", "client_type": 2, "ios_info": {"bundle_id": "com.gembalakecil.gembalaKecil"}}
+      ]}}
     }
   ],
   "configuration_version": "1"

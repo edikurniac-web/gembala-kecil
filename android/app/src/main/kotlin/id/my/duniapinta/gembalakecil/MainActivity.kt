@@ -1,4 +1,4 @@
-package com.gembalakecil.gembala_kecil
+package id.my.duniapinta.gembalakecil
 
 import io.flutter.embedding.android.FlutterActivity
 

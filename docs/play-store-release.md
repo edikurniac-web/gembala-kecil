@@ -3,7 +3,7 @@
 ## Build saat ini
 
 - Application ID: `id.my.duniapinta.gembalakecil`
-- Versi: `1.0.0 (2)`
+- Versi: `1.0.0 (3)`
 - Tipe rilis: Android App Bundle (`.aab`)
 - Signing: upload key khusus Gembala Kecil
 - Privacy policy: <https://api-gembalakecil.duniapinta.my.id/privacy>
