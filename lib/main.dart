@@ -22,6 +22,8 @@ const coral = Color(0xFFE98B72);
 const cream = Color(0xFFFFFCF5);
 const lavender = Color(0xFFF0E9FF);
 const gold = Color(0xFFFFCF48);
+const homeCardColor = Color(0xD9EAF6FF);
+const homeCardShadow = Color(0x1F1E344E);
 ContentCatalog appCatalog = const ContentCatalog([StoryBook.builtIn], []);
 
 bool _isRemotePath(String path) =>
@@ -719,9 +721,17 @@ class HomeScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        color: const Color(0xB3FFFDF7),
+                        color: homeCardColor,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: const Color(0xCCFFFFFF))),
+                        border: Border.all(color: Colors.white),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: homeCardShadow,
+                            blurRadius: 22,
+                            spreadRadius: 2,
+                            offset: Offset(0, 7),
+                          ),
+                        ]),
                     child: Row(children: [
                       Expanded(
                           flex: 47,
@@ -743,12 +753,12 @@ class HomeScreen extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                        color: const Color(0xFFDDEFD8),
+                                        color: teal,
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     child: const Text('▣  Cerita Hari Ini',
                                         style: TextStyle(
-                                            color: Color(0xFF4E7757),
+                                            color: Colors.white,
                                             fontSize: 11,
                                             fontWeight: FontWeight.w700))),
                                 const SizedBox(height: 6),
@@ -793,7 +803,7 @@ class HomeScreen extends StatelessWidget {
                             title: 'Semua\nCerita',
                             iconAsset:
                                 'assets/brand/icons/semua_cerita_watercolor.png',
-                            color: const Color(0xB3FFFDF7),
+                            color: homeCardColor,
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -805,7 +815,7 @@ class HomeScreen extends StatelessWidget {
                             title: 'Ayat\nHafalan',
                             iconAsset:
                                 'assets/brand/icons/ayat_hafalan_watercolor.png',
-                            color: const Color(0xB3FFFDF7),
+                            color: homeCardColor,
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -834,43 +844,56 @@ class _HomeTile extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => Material(
-      color: color,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-          side: const BorderSide(color: Color(0xCCFFFFFF))),
-      child: InkWell(
-          borderRadius: BorderRadius.circular(22),
-          onTap: onTap,
-          child: Padding(
-              padding: const EdgeInsets.all(13),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: FractionallySizedBox(
-                                widthFactor: .95,
-                                heightFactor: .95,
-                                child: Image.asset(iconAsset,
-                                    fit: BoxFit.contain,
-                                    alignment: Alignment.center)))),
-                    Row(children: [
+  Widget build(BuildContext context) => Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: homeCardShadow,
+            blurRadius: 22,
+            spreadRadius: 2,
+            offset: Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Material(
+        color: color,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+            side: const BorderSide(color: Colors.white)),
+        child: InkWell(
+            borderRadius: BorderRadius.circular(22),
+            onTap: onTap,
+            child: Padding(
+                padding: const EdgeInsets.all(13),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Expanded(
-                          child: Text(title,
-                              style: const TextStyle(
-                                  fontSize: 17,
-                                  height: 1,
-                                  fontWeight: FontWeight.w700,
-                                  color: ink))),
-                      const CircleAvatar(
-                          radius: 15,
-                          backgroundColor: Color(0x22AA88EE),
-                          child: Icon(Icons.arrow_forward_ios_rounded,
-                              size: 14, color: ink))
-                    ]),
-                  ]))));
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: FractionallySizedBox(
+                                  widthFactor: .95,
+                                  heightFactor: .95,
+                                  child: Image.asset(iconAsset,
+                                      fit: BoxFit.contain,
+                                      alignment: Alignment.center)))),
+                      Row(children: [
+                        Expanded(
+                            child: Text(title,
+                                style: const TextStyle(
+                                    fontSize: 17,
+                                    height: 1,
+                                    fontWeight: FontWeight.w700,
+                                    color: ink))),
+                        const CircleAvatar(
+                            radius: 15,
+                            backgroundColor: Color(0x22AA88EE),
+                            child: Icon(Icons.arrow_forward_ios_rounded,
+                                size: 14, color: ink))
+                      ]),
+                    ]))),
+      ));
 }
 
 class StoryListScreen extends StatefulWidget {
@@ -1099,84 +1122,108 @@ class _StoryListScreenState extends State<StoryListScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+          backgroundColor: Colors.transparent,
           title: const Text('Semua Cerita',
               style: TextStyle(fontWeight: FontWeight.w700))),
-      body: ListView(padding: const EdgeInsets.all(18), children: [
-        const Text('Pilih ceritamu',
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.w700, color: ink)),
-        const Text('Baca sendiri atau dengarkan Gembala membacakannya.',
-            style: TextStyle(color: Color(0xFF687889))),
-        const SizedBox(height: 16),
-        for (final story in appCatalog.stories) ...[
-          Material(
-              color: lavender,
-              borderRadius: BorderRadius.circular(22),
-              child: InkWell(
+      body: Stack(fit: StackFit.expand, children: [
+        Image.asset('assets/brand/home_garden_watercolor.png',
+            fit: BoxFit.cover),
+        SafeArea(
+            child: ListView(padding: const EdgeInsets.all(18), children: [
+          const Text('Pilih ceritamu',
+              style: TextStyle(
+                  fontSize: 25, fontWeight: FontWeight.w700, color: ink)),
+          const Text('Baca sendiri atau dengarkan Gembala membacakannya.',
+              style: TextStyle(color: Color(0xFF687889))),
+          const SizedBox(height: 16),
+          for (final story in appCatalog.stories) ...[
+            Container(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(22),
-                  onTap: () => openStory(story),
-                  child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(children: [
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: SizedBox.square(
-                                dimension: 108,
-                                child: contentImage(story.cover))),
-                        const SizedBox(width: 14),
-                        Expanded(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                              Text(story.title,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      height: 1.05,
-                                      fontWeight: FontWeight.w700,
-                                      color: ink)),
-                              const SizedBox(height: 7),
-                              Text(story.reference,
-                                  style: const TextStyle(
-                                      color: Color(0xFF687889))),
-                              const SizedBox(height: 8),
-                              if (widget.prefs.getBool(
-                                      localReadKey(story.id, widget.prefs)) ==
-                                  true)
-                                const Row(children: [
-                                  Icon(Icons.check_circle,
-                                      color: teal, size: 18),
-                                  SizedBox(width: 5),
-                                  Text('Sudah dibaca',
-                                      style: TextStyle(
-                                          color: teal,
-                                          fontWeight: FontWeight.w600))
-                                ]),
-                              if (!story.isFree)
-                                const Row(children: [
-                                  Icon(Icons.lock_outline_rounded,
-                                      color: coral, size: 18),
-                                  SizedBox(width: 5),
-                                  Text('Premium',
-                                      style: TextStyle(
-                                          color: coral,
-                                          fontWeight: FontWeight.w600)),
-                                ]),
-                              if (!StoryDownloads.instance.isDownloaded(story))
-                                const Row(children: [
-                                  Icon(Icons.download_rounded,
-                                      color: teal, size: 18),
-                                  SizedBox(width: 5),
-                                  Text('Unduh untuk membaca',
-                                      style: TextStyle(
-                                          color: teal,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600)),
-                                ]),
-                            ])),
-                      ])))),
-          const SizedBox(height: 12),
-        ],
+                  boxShadow: const [
+                    BoxShadow(
+                      color: homeCardShadow,
+                      blurRadius: 22,
+                      spreadRadius: 2,
+                      offset: Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: homeCardColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22),
+                      side: const BorderSide(color: Colors.white)),
+                  child: InkWell(
+                      borderRadius: BorderRadius.circular(22),
+                      onTap: () => openStory(story),
+                      child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: SizedBox.square(
+                                    dimension: 108,
+                                    child: contentImage(story.cover))),
+                            const SizedBox(width: 14),
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text(story.title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          height: 1.05,
+                                          fontWeight: FontWeight.w700,
+                                          color: ink)),
+                                  const SizedBox(height: 7),
+                                  Text(story.reference,
+                                      style: const TextStyle(
+                                          color: Color(0xFF687889))),
+                                  const SizedBox(height: 8),
+                                  if (widget.prefs.getBool(localReadKey(
+                                          story.id, widget.prefs)) ==
+                                      true)
+                                    const Row(children: [
+                                      Icon(Icons.check_circle,
+                                          color: teal, size: 18),
+                                      SizedBox(width: 5),
+                                      Text('Sudah dibaca',
+                                          style: TextStyle(
+                                              color: teal,
+                                              fontWeight: FontWeight.w600))
+                                    ]),
+                                  if (!story.isFree)
+                                    const Row(children: [
+                                      Icon(Icons.lock_outline_rounded,
+                                          color: coral, size: 18),
+                                      SizedBox(width: 5),
+                                      Text('Premium',
+                                          style: TextStyle(
+                                              color: coral,
+                                              fontWeight: FontWeight.w600)),
+                                    ]),
+                                  if (!StoryDownloads.instance
+                                      .isDownloaded(story))
+                                    const Row(children: [
+                                      Icon(Icons.download_rounded,
+                                          color: teal, size: 18),
+                                      SizedBox(width: 5),
+                                      Text('Unduh',
+                                          style: TextStyle(
+                                              color: teal,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600)),
+                                    ]),
+                                ])),
+                          ]))),
+                )),
+            const SizedBox(height: 18),
+          ],
+        ]))
       ]));
 }
 
@@ -1255,28 +1302,56 @@ class VerseScreen extends StatelessWidget {
   const VerseScreen({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('Ayat Hafalan')),
-      body: appCatalog.verses.isEmpty
-          ? const Center(
-              child: Text('Ayat Hafalan segera hadir.',
-                  style: TextStyle(fontSize: 19, color: ink)))
-          : ListView(padding: const EdgeInsets.all(18), children: [
-              for (final verse in appCatalog.verses)
-                Card(
-                    color: const Color(0xFFFFF0D4),
-                    child: ListTile(
-                        leading:
-                            const Icon(Icons.menu_book_rounded, color: teal),
-                        title: Text(verse.title),
-                        subtitle: Text(verse.reference),
-                        trailing: const Icon(Icons.arrow_forward_ios_rounded,
-                            size: 16),
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    VerseDetailScreen(verse: verse))))),
-            ]));
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: const Text('Ayat Hafalan')),
+      body: Stack(fit: StackFit.expand, children: [
+        Image.asset('assets/brand/home_garden_watercolor.png',
+            fit: BoxFit.cover),
+        SafeArea(
+          child: appCatalog.verses.isEmpty
+              ? const Center(
+                  child: Text('Ayat Hafalan segera hadir.',
+                      style: TextStyle(fontSize: 19, color: ink)))
+              : ListView(padding: const EdgeInsets.all(18), children: [
+                  for (final verse in appCatalog.verses) ...[
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: homeCardShadow,
+                              blurRadius: 22,
+                              spreadRadius: 2,
+                              offset: Offset(0, 7),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: homeCardColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              side: const BorderSide(color: Colors.white)),
+                          child: ListTile(
+                              leading: const Icon(Icons.menu_book_rounded,
+                                  color: teal),
+                              title: Text(verse.title),
+                              subtitle: Text(verse.reference),
+                              trailing: const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 16),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          VerseDetailScreen(verse: verse)))),
+                        )),
+                    const SizedBox(height: 18),
+                  ],
+                ]),
+        ),
+      ]));
 }
 
 class VerseDetailScreen extends StatefulWidget {
